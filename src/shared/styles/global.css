@@ -1,0 +1,78 @@
+/* 
+ *  global.css
+ *  TFM Frontend
+ *
+ *  Created by Victor Sanchez on Jan 12, 2026.
+ *  Copyright © 2026 Victor Sanchez. All rights reserved.
+ */
+
+:root {
+  color-scheme: light;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
+  color: #101828;
+  background-color: #f5f7fb;
+
+  --color-bg: #f5f7fb;
+  --color-surface: #ffffff;
+  --color-primary: #2f6fed;
+  --color-primary-dark: #1f4cb3;
+  --color-text: #101828;
+  --color-muted: #475467;
+  --color-border: #e4e7ec;
+  --color-success: #17b26a;
+  --color-warning: #f79009;
+  --color-danger: #f04438;
+  --radius-base: 12px;
+  --radius-pill: 999px;
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.06);
+  --shadow-md: 0 8px 30px rgba(15, 23, 42, 0.08);
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+  color: #f2f4f7;
+  background-color: #0b1221;
+  --color-bg: #0b1221;
+  --color-surface: #111a2f;
+  --color-primary: #6aa5ff;
+  --color-primary-dark: #3a7ce3;
+  --color-text: #f2f4f7;
+  --color-muted: #98a2b3;
+  --color-border: #1f2a44;
+  --shadow-sm: 0 1px 2px rgba(2, 6, 23, 0.7);
+  --shadow-md: 0 8px 30px rgba(2, 6, 23, 0.7);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button {
+  font: inherit;
+  border: none;
+  cursor: pointer;
+}
