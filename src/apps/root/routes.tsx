@@ -11,6 +11,7 @@ import { HomePage } from './HomePage'
 import { RegisterPage, LoginPage } from '../auth'
 import { DashboardPage } from '../dashboard'
 import { ProfilePage } from '../profile'
+import { GoalsPage } from '../goals'
 
 export function AppRoutes() {
   return (
@@ -20,6 +21,7 @@ export function AppRoutes() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/dashboard" element={<DashboardPage />} />
       <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/goals" element={<GoalsPage />} />
       <Route path="/home" element={<HomePage />} />
     </Routes>
   )

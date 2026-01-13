@@ -59,8 +59,7 @@ export function DashboardPage() {
   }
 
   const handleGoalsClick = () => {
-    // TODO: Navigate to goals page
-    console.log('Navigate to goals')
+    navigate('/goals')
   }
 
   const handleContentClick = () => {

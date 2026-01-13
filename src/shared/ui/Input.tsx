@@ -7,23 +7,24 @@
 //
 
 import { forwardRef } from 'react'
+import type { ChangeHandler } from 'react-hook-form'
 import styles from './Input.module.css'
 
 type InputProps = {
   label?: string
   error?: string
-  type?: 'text' | 'email' | 'password'
+  type?: 'text' | 'email' | 'password' | 'date'
   placeholder?: string
   required?: boolean
   disabled?: boolean
   value?: string
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
-  onBlur?: () => void
+  onBlur?: ChangeHandler
   className?: string
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, error, type = 'text', placeholder, required, disabled, value, onChange, onBlur, className }, ref) => {
+  ({ label, error, type = 'text', placeholder, required, disabled, value, onChange, onBlur, className, ...rest }, ref) => {
     return (
       <div className={`${styles.inputContainer} ${className || ''}`}>
         {label && (
@@ -42,6 +43,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           onChange={onChange}
           onBlur={onBlur}
           className={styles.input}
+          {...rest}
         />
         {error && <p className={styles.error}>{error}</p>}
       </div>
