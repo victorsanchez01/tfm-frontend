@@ -1,0 +1,93 @@
+.activityCard {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.activityHeader {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.activityTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0;
+}
+
+.activityList {
+  display: flex;
+  flex-direction: column;
+}
+
+.activityItem {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.activityItem:last-child {
+  border-bottom: none;
+}
+
+.activityItem:hover {
+  background-color: #f8fafc;
+}
+
+.activityContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.activityInfo {
+  display: flex;
+  align-items: center;
+}
+
+.activityDot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  margin-right: 0.75rem;
+  flex-shrink: 0;
+}
+
+.activityDotEmerald {
+  background-color: #10b981;
+}
+
+.activityDotBlue {
+  background-color: #3b82f6;
+}
+
+.activityDotViolet {
+  background-color: #8b5cf6;
+}
+
+.activityText {
+  display: flex;
+  flex-direction: column;
+}
+
+.activityName {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #0f172a;
+  margin: 0;
+}
+
+.activityDetail {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-top: 0.25rem;
+  margin: 0;
+  margin-top: 0.25rem;
+}
+
+.activityTime {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}

@@ -3,6 +3,8 @@
     "baseUrl": "./src",
     "paths": {
       "@apps/*": ["apps/*"],
+      "@auth/*": ["apps/auth/*"],
+      "@dashboard/*": ["apps/dashboard/*"],
       "@shared/*": ["shared/*"],
       "@services/*": ["services/*"],
       "@mocks/*": ["mocks/*"]

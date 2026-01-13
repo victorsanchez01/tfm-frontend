@@ -7,6 +7,8 @@ export default defineConfig({
   resolve: {
     alias: {
       '@apps': path.resolve(__dirname, './src/apps'),
+      '@auth': path.resolve(__dirname, './src/apps/auth'),
+      '@dashboard': path.resolve(__dirname, './src/apps/dashboard'),
       '@shared': path.resolve(__dirname, './src/shared'),
       '@services': path.resolve(__dirname, './src/services'),
       '@mocks': path.resolve(__dirname, './src/mocks'),

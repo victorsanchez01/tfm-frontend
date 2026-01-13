@@ -6,7 +6,7 @@
 //  Copyright © 2026 Victor Sanchez. All rights reserved.
 //
 
-import { useTheme } from '@shared/providers/ThemeProvider'
+import { useTheme } from '@shared/providers/useTheme'
 
 export function HomePage() {
   const { theme, toggleTheme } = useTheme()

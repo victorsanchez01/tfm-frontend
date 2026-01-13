@@ -1,0 +1,219 @@
+.dashboard {
+  min-height: 100vh;
+  background-color: #f8fafc;
+}
+
+.header {
+  border-bottom: 1px solid #e2e8f0;
+  background-color: #ffffff;
+}
+
+.headerContent {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.headerTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0;
+}
+
+.headerSubtitle {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin: 0;
+  margin-top: 0.25rem;
+}
+
+.main {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+  .cardGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  transition: border-color 0.15s ease-in-out;
+}
+
+.card:hover {
+  border-color: #cbd5e1;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.cardIcon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cardIconBlue {
+  background-color: #dbeafe;
+}
+
+.cardIconEmerald {
+  background-color: #d1fae5;
+}
+
+.cardIconViolet {
+  background-color: #ede9fe;
+}
+
+.cardIcon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.cardIconBlue svg {
+  color: #2563eb;
+}
+
+.cardIconEmerald svg {
+  color: #059669;
+}
+
+.cardIconViolet svg {
+  color: #7c3aed;
+}
+
+.cardTitle {
+  margin-left: 0.75rem;
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: #0f172a;
+}
+
+.cardDescription {
+  font-size: 0.875rem;
+  color: #475569;
+  margin-bottom: 1rem;
+}
+
+.activityCard {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.activityHeader {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.activityTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0;
+}
+
+.activityList {
+  display: flex;
+  flex-direction: column;
+}
+
+.activityItem {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.activityItem:last-child {
+  border-bottom: none;
+}
+
+.activityItem:hover {
+  background-color: #f8fafc;
+}
+
+.activityContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.activityInfo {
+  display: flex;
+  align-items: center;
+}
+
+.activityDot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  margin-right: 0.75rem;
+  flex-shrink: 0;
+}
+
+.activityDotEmerald {
+  background-color: #10b981;
+}
+
+.activityDotBlue {
+  background-color: #3b82f6;
+}
+
+.activityDotViolet {
+  background-color: #8b5cf6;
+}
+
+.activityText {
+  display: flex;
+  flex-direction: column;
+}
+
+.activityName {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #0f172a;
+  margin: 0;
+}
+
+.activityDetail {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-top: 0.25rem;
+  margin: 0;
+  margin-top: 0.25rem;
+}
+
+.activityTime {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
