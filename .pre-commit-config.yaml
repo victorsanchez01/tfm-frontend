@@ -1,0 +1,23 @@
+# //
+# //  .pre-commit-config.yaml
+# //  TFM Frontend
+# //
+# //  Created by Victor Sanchez on Jan 12, 2026.
+# //  Copyright © 2026 Victor Sanchez. All rights reserved.
+# //
+
+repos:
+  - repo: local
+    hooks:
+      - id: lint
+        name: lint
+        entry: npm run lint
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: typecheck
+        name: typecheck
+        entry: npm run typecheck
+        language: system
+        pass_filenames: false
+        always_run: true
