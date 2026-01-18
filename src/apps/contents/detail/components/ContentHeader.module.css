@@ -1,0 +1,139 @@
+.header {
+  position: relative;
+  height: 320px;
+  overflow: hidden;
+}
+
+.background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.background img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.7));
+}
+
+.content {
+  position: relative;
+  height: 100%;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  color: #ffffff;
+}
+
+.breadcrumb {
+  margin-bottom: 2rem;
+}
+
+.backLink {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.5rem;
+  color: #ffffff;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.backLink:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.info {
+  max-width: 60rem;
+}
+
+.meta {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.type {
+  padding: 0.25rem 0.75rem;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.level {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.levelBeginner {
+  background-color: rgba(16, 185, 129, 0.2);
+  color: #86efac;
+}
+
+.levelIntermediate {
+  background-color: rgba(245, 158, 11, 0.2);
+  color: #fde68a;
+}
+
+.levelAdvanced {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 1.5rem 0;
+}
+
+.stats {
+  display: flex;
+  gap: 2rem;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  opacity: 0.9;
+}
+
+@media (max-width: 768px) {
+  .header {
+    height: 280px;
+  }
+
+  .content {
+    padding: 1.5rem;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .stats {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+}

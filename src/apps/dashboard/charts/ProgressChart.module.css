@@ -1,0 +1,18 @@
+.container {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 1.5rem 0;
+}
+
+.chart {
+  height: 250px;
+  position: relative;
+}

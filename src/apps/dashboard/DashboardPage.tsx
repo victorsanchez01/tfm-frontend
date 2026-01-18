@@ -11,8 +11,10 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '@shared/ui'
 import { getStoredAccessToken, clearTokens } from '../../services/auth/authService'
 import { dashboardService, type DashboardStats, type ActivityItem } from '../../services/dashboard/dashboardService'
+import { statsService, type StatsOverview as StatsOverviewType, type StudyTimeData, type ProgressData, type ActivityData } from '../../services/stats'
 import { DashboardCard } from './components/DashboardCard'
 import { ActivityList } from './components/ActivityList'
+import { StatsOverview, StudyTimeChart, ProgressChart, WeeklyActivityChart } from './charts'
 import styles from './DashboardPage.module.css'
 
 export function DashboardPage() {
@@ -21,6 +23,10 @@ export function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [activities, setActivities] = useState<ActivityItem[]>([])
   const [loading, setLoading] = useState(true)
+  const [statsOverview, setStatsOverview] = useState<StatsOverviewType | null>(null)
+  const [studyTime, setStudyTime] = useState<StudyTimeData[]>([])
+  const [progress, setProgress] = useState<ProgressData[]>([])
+  const [weeklyActivity, setWeeklyActivity] = useState<ActivityData[]>([])
 
   useEffect(() => {
     if (!token) {
@@ -31,12 +37,21 @@ export function DashboardPage() {
   useEffect(() => {
     const loadDashboardData = async () => {
       try {
-        const [statsData, activitiesData] = await Promise.all([
+        const [statsData, activitiesData, overviewData, studyTimeData, progressData, activityData] = await Promise.all([
           dashboardService.getDashboardStats(),
           dashboardService.getRecentActivities(),
+          statsService.getOverview(),
+          statsService.getStudyTime(30),
+          statsService.getProgressByCategory(),
+          statsService.getWeeklyActivity(),
         ])
+        
         setStats(statsData)
         setActivities(activitiesData)
+        setStatsOverview(overviewData)
+        setStudyTime(studyTimeData)
+        setProgress(progressData)
+        setWeeklyActivity(activityData)
       } catch (error) {
         console.error('Error loading dashboard data:', error)
       } finally {
@@ -63,8 +78,7 @@ export function DashboardPage() {
   }
 
   const handleContentClick = () => {
-    // TODO: Navigate to content page
-    console.log('Navigate to content')
+    navigate('/contents')
   }
 
   if (!token) {
@@ -104,6 +118,10 @@ export function DashboardPage() {
       </header>
 
       <main className={styles.main}>
+        {statsOverview && (
+          <StatsOverview stats={statsOverview} />
+        )}
+        
         <div className={styles.cardGrid}>
           <DashboardCard
             icon={
@@ -141,6 +159,12 @@ export function DashboardPage() {
             buttonText="Explorar"
             onButtonClick={handleContentClick}
           />
+        </div>
+
+        <div className={styles.chartsGrid}>
+          <StudyTimeChart data={studyTime} />
+          <ProgressChart data={progress} />
+          <WeeklyActivityChart data={weeklyActivity} />
         </div>
 
         <ActivityList activities={activities} />
