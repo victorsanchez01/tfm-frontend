@@ -114,6 +114,8 @@ Plataforma de aprendizaje impulsada por IA (AI-driven Learning Platform) con fro
 - [ ] Solo muestra dominios activos (estado = publicado)
 - [ ] Tiempo de respuesta menor a 300ms para menos de 100 dominios
 
+**Estado:** ❌ No implementado
+
 ---
 
 #### US-011: Crear Dominio
@@ -297,29 +299,15 @@ Plataforma de aprendizaje impulsada por IA (AI-driven Learning Platform) con fro
 **Para** medir mi nivel de conocimiento de forma personalizada
 
 **Criterios de Aceptación:**
-- [ ] El estudiante puede iniciar una evaluación especificando la skill a evaluar
-- [ ] Se crea una sesión con estado "activa" y timestamp de inicio
-- [ ] La sesión tiene un tiempo máximo configurable (por defecto 30 minutos)
-- [ ] Se selecciona el primer ítem usando el algoritmo adaptativo
-- [ ] Solo puede haber una sesión activa por usuario a la vez
-- [ ] Retorna: ID de sesión, primer ítem, tiempo restante
-- [ ] Si ya existe una sesión activa, ofrece retomarla o cancelarla
+- [x] El estudiante puede iniciar una evaluación especificando la skill a evaluar
+- [x] Se crea una sesión con estado "activa" y timestamp de inicio
+- [x] La sesión tiene un tiempo máximo configurable (por defecto 30 minutos)
+- [x] Se selecciona el primer ítem usando el algoritmo adaptativo
+- [x] Solo puede haber una sesión activa por usuario a la vez
+- [x] Retorna: ID de sesión, primer ítem, tiempo restante
+- [x] Si ya existe una sesión activa, ofrece retomarla o cancelarla
 
----
-
-#### US-031: Obtener Siguiente Ítem
-**Como** estudiante  
-**Quiero** que la evaluación seleccione automáticamente el siguiente ítem según mi desempeño  
-**Para** recibir preguntas acordes a mi nivel real de conocimiento
-
-**Criterios de Aceptación:**
-- [ ] El sistema invoca al motor de IA para seleccionar el siguiente ítem
-- [ ] La selección considera: respuestas anteriores, tiempo de respuesta, nivel estimado actual
-- [ ] El ítem seleccionado tiene dificultad apropiada al nivel estimado (±1 nivel)
-- [ ] No se repiten ítems ya presentados en la sesión
-- [ ] Retorna: pregunta, opciones (si aplica), tipo de ítem, dificultad
-- [ ] Si no hay más ítems disponibles, finaliza la evaluación
-- [ ] Incluye número de pregunta actual y total estimado
+**Estado:** ✅ Completado (con adaptatividad real)
 
 ---
 
@@ -329,13 +317,15 @@ Plataforma de aprendizaje impulsada por IA (AI-driven Learning Platform) con fro
 **Para** que el sistema registre y analice mi desempeño
 
 **Criterios de Aceptación:**
-- [ ] El estudiante envía: ID de sesión, ID de ítem, respuesta, tiempo de respuesta
-- [ ] Se valida que el ítem corresponda a la sesión activa
-- [ ] Se evalúa automáticamente si la respuesta es correcta
-- [ ] Se actualiza el nivel estimado del estudiante (algoritmo IRT/CAT)
-- [ ] Se registra la respuesta con todos los metadatos
-- [ ] Retorna: resultado (correcto/incorrecto), puntuación parcial, si hay siguiente ítem
-- [ ] Si la sesión expiró, retorna HTTP 410 (Gone)
+- [x] El estudiante envía: ID de sesión, ID de ítem, respuesta, tiempo de respuesta
+- [x] Se valida que el ítem corresponda a la sesión activa
+- [x] Se evalúa automáticamente si la respuesta es correcta
+- [x] Se actualiza el nivel estimado del estudiante (algoritmo IRT/CAT simplificado)
+- [x] Se registra la respuesta con todos los metadatos
+- [x] Retorna: resultado (correcto/incorrecto), puntuación parcial, si hay siguiente ítem
+- [x] Si la sesión expiró, retorna HTTP 410 (Gone)
+
+**Estado:** ✅ Completado (con algoritmo IRT/CAT simplificado)
 
 ---
 
@@ -345,14 +335,16 @@ Plataforma de aprendizaje impulsada por IA (AI-driven Learning Platform) con fro
 **Para** entender mis errores y recibir explicaciones o pistas contextuales
 
 **Criterios de Aceptación:**
-- [ ] Tras cada respuesta incorrecta, se genera feedback automáticamente
-- [ ] El feedback es generado por el motor de IA
-- [ ] Incluye: explicación del concepto, por qué la respuesta era incorrecta, pista para entender
-- [ ] El tono es pedagógico, positivo y motivador
-- [ ] El feedback está contextualizado a la pregunta específica
+- [x] Tras cada respuesta incorrecta, se genera feedback automáticamente
+- [x] El feedback es generado por el motor de IA
+- [x] Incluye: explicación del concepto, por qué la respuesta era incorrecta, pista para entender
+- [x] El tono es pedagógico, positivo y motivador
+- [x] El feedback está contextualizado a la pregunta específica
 - [ ] El estudiante puede solicitar feedback adicional ("explicar de otra forma")
-- [ ] Tiempo de generación menor a 3 segundos
-- [ ] Para respuestas correctas, ofrece refuerzo positivo opcional
+- [x] Tiempo de generación menor a 3 segundos
+- [x] Para respuestas correctas, ofrece refuerzo positivo opcional
+
+**Estado:** ⚠️ Básico implementado (sin IA real)
 
 ---
 

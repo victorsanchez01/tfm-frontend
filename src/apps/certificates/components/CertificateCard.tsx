@@ -94,10 +94,6 @@ export function CertificateCard({ certificate, onView }: CertificateCardProps) {
             <span className={styles.value}>{certificate.courseName}</span>
           </div>
           <div className={styles.infoRow}>
-            <span className={styles.label}>Instructor:</span>
-            <span className={styles.value}>{certificate.instructorName}</span>
-          </div>
-          <div className={styles.infoRow}>
             <span className={styles.label}>Fecha de emisión:</span>
             <span className={styles.value}>
               {certificate.issueDate.toLocaleDateString('es-ES')}

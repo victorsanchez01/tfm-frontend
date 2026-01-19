@@ -72,8 +72,8 @@ export function CertificateModal({ certificate, isOpen, onClose }: CertificateMo
                   <div className={styles.signatures}>
                     <div className={styles.signature}>
                       <div className={styles.line}></div>
-                      <p>{certificate.instructorName}</p>
-                      <span>Instructor</span>
+                      <p>TFM Learning Platform</p>
+                      <span>Plataforma de Aprendizaje IA</span>
                     </div>
                     <div className={styles.signature}>
                       <div className={styles.line}></div>

@@ -2,22 +2,28 @@
 
 ## 🎯 Estado Actual del Proyecto
 
-### ✅ Completado (75% del MVP)
-- **Autenticación**: Login, registro, manejo de sesiones
-- **Gestión de Perfil**: Edición de datos, avatar, estadísticas
-- **Gestión de Objetivos**: CRUD completo, hitos, estados
-- **Catálogo de Contenidos**: Listado, filtros, búsqueda
-- **Dashboard**: Vista principal con navegación
+### ✅ Completado (41% de Historias de Usuario)
+- **Autenticación**: Login, registro, manejo de sesiones (US-001, US-002)
+- **Gestión de Perfil**: Edición de datos, avatar, estadísticas (US-003)
+- **Gestión de Objetivos**: CRUD completo, hitos, estados (US-004, US-005)
+- **Catálogo de Contenidos**: Listado, filtros, búsqueda (US-014)
+- **Sistema de Favoritos**: Guardar y gestionar contenidos favoritos (US-016)
+- **Dashboard**: Vista principal con gráficos y navegación
+- **Sistema de Notificaciones**: Completo con centro de notificaciones
+- **Sistema de Certificados**: Generación y gestión de certificados
+- **Detalle de Contenido**: VideoPlayer, QuizPlayer, recursos
+- **Evaluación Adaptativa**: QuizPlayer con algoritmo IRT/CAT (US-030, US-032)
 
-### 🔄 En Progreso
-- Navegación entre páginas (conectada pero sin detalle)
-- Sistema de diseño consistente
+### 🔄 Parcialmente Implementado
+- **Feedback Personalizado**: Sistema básico sin IA real (US-033)
 
-### ❌ Por Implementar (25% del MVP)
-- Página de detalle de contenido
-- Gráficos y estadísticas
-- Sistema de notificaciones
-- Reportes y exportación
+### ❌ Por Implementar (59% de Historias de Usuario)
+- **Gestión de Dominios**: Listar dominios de conocimiento (US-010)
+- **Gestión de Skills**: Listar skills por dominio (US-012)
+- **Planificación Adaptativa**: Generar y gestionar planes de aprendizaje (US-020, US-021, US-022, US-023)
+- **Evaluación Avanzada**: Consultas de dominio y feedback con IA (US-031, US-034, US-033)
+- **Tracking y Analítica**: Registro y consulta de eventos (US-040, US-041)
+- **Funciones de Administrador**: Crear/editar dominios, contenidos, prerrequisitos (US-011, US-013, US-015)
 
 ---
 
@@ -40,22 +46,27 @@ El diseño actual es:
 
 ---
 
-## 📋 Próximos Pasos (Priorizados)
+## 📋 Próximos Pasos (Según Historias de Usuario)
 
-### 1. **IMPERATIVO**: Página de Detalle de Contenido
-- Impacto: Usuario puede ver y empezar a consumir contenido
+### 1. **US-010: Listar Dominios** - Prioridad ALTA
+- Impacto: Usuario puede explorar áreas de conocimiento
 - Estimado: 2-3 días
 - Dependencias: Ninguna
 
-### 2. **IMPORTANTE**: Mejorar Dashboard con Gráficos
-- Impacto: Visualización de progreso
-- Estimado: 2 días
-- Dependencias: Librería de gráficos
+### 2. **US-012: Listar Skills por Dominio** - Prioridad ALTA
+- Impacto: Usuario puede ver habilidades específicas de cada área
+- Estimado: 2-3 días
+- Dependencias: US-010
 
-### 3. **DESEABLE**: Sistema de Notificaciones
-- Impacto: Engagement del usuario
-- Estimado: 2 días
-- Dependencias: Estado global
+### 3. **US-020: Generar Plan Inicial** - Prioridad ALTA
+- Impacto: Core de la plataforma - planes personalizados
+- Estimado: 3-4 días
+- Dependencias: US-010, US-012
+
+### 4. **US-022: Ver Módulos del Plan** - Prioridad ALTA
+- Impacto: Seguimiento del progreso del plan
+- Estimado: 2-3 días
+- Dependencias: US-020
 
 ---
 
@@ -109,15 +120,25 @@ Solo falta completar el flujo de aprendizaje para tener un MVP completo.
 ## 📝 Notas para Retomar
 
 1. **Servidor corriendo en**: http://localhost:5173
-2. **Último commit**: "feat: implement goals management system"
+2. **Último commit**: "feat: implement adaptive quiz with IRT/CAT"
 3. **Rama**: master
 4. **Stack**: React + Vite + TypeScript + CSS Modules
+5. **Historias completadas**: 9/22 (41%)
 
 ### Para continuar:
-1. Revisar `docs/analysis-and-plan.md`
-2. Verificar `docs/user-stories.md`
-3. Empezar con página de detalle de contenido
+1. Revisar `docs/analysis-and-plan.md` para estado detallado
+2. Verificar `docs/user-stories.md` con criterios de aceptación
+3. Empezar con **US-010: Listar Dominios** o **US-033: Feedback con IA**
+4. Revisar `docs/verification-status.md` para ver estado completo
+
+### Adicionales implementados (no en historias):
+- ✅ Sistema de Notificaciones completo
+- ✅ Sistema de Certificados completo  
+- ✅ Dashboard con gráficos avanzados
+- ✅ Estadísticas detalladas
+- ✅ QuizPlayer con algoritmo adaptativo IRT/CAT
+- ✅ Eliminación completa de referencias a instructores (plataforma 100% IA)
 
 ---
 
-*Resumen creado: 18 de Enero, 2026*
+*Resumen actualizado: 18 de Enero, 2026 - 21:05*

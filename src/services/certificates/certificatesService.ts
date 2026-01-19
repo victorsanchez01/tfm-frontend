@@ -11,7 +11,6 @@ export interface Certificate {
   title: string
   description: string
   courseName: string
-  instructorName: string
   completionDate: Date
   issueDate: Date
   score: number
@@ -31,7 +30,6 @@ const generateMockCertificates = (): Certificate[] => {
     title: 'Certificado de Finalización',
     description: 'Ha completado exitosamente el curso de React Fundamentals',
     courseName: 'React Fundamentals',
-    instructorName: 'Dr. Juan Pérez',
     completionDate: new Date('2024-01-10'),
     issueDate: new Date('2024-01-11'),
     score: 95,
@@ -48,7 +46,6 @@ const generateMockCertificates = (): Certificate[] => {
     title: 'Certificado de Finalización',
     description: 'Ha completado exitosamente el curso de TypeScript Avanzado',
     courseName: 'TypeScript Avanzado',
-    instructorName: 'Dra. María González',
     completionDate: new Date('2024-01-05'),
     issueDate: new Date('2024-01-06'),
     score: 88,
@@ -65,7 +62,6 @@ const generateMockCertificates = (): Certificate[] => {
     title: 'Certificado de Finalización',
     description: 'Ha completado exitosamente el curso de Node.js Backend Development',
     courseName: 'Node.js Backend Development',
-    instructorName: 'Ing. Carlos Rodríguez',
     completionDate: new Date('2023-12-20'),
     issueDate: new Date('2023-12-21'),
     score: 92,
@@ -82,7 +78,6 @@ const generateMockCertificates = (): Certificate[] => {
     title: 'Certificado de Finalización',
     description: 'Completando el curso de Vue.js 3 Completo',
     courseName: 'Vue.js 3 Completo',
-    instructorName: 'Lic. Ana Martínez',
     completionDate: new Date(), // Not completed yet
     issueDate: new Date(),
     score: 0,

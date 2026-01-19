@@ -96,10 +96,17 @@ export function ContentDetailPage() {
     // TODO: Mark as completed
   }
 
-  const handleQuizComplete = (score: number, total: number) => {
-    console.log(`Quiz completed: ${score}/${total}`)
+  const handleQuizComplete = (result: {
+    score: number
+    total: number
+    estimatedLevel: number
+    confidence: number
+  }) => {
+    console.log(`Quiz completed: ${result.score}/${result.total}`)
+    console.log(`Estimated level: ${result.estimatedLevel}`)
+    console.log(`Confidence: ${result.confidence}`)
     setShowQuiz(false)
-    // TODO: Save quiz results
+    // TODO: Save quiz results with adaptive metrics
   }
 
   if (!token) {
@@ -168,10 +175,6 @@ export function ContentDetailPage() {
 
           <div className={styles.info}>
             <div className={styles.infoItem}>
-              <span className={styles.label}>Instructor</span>
-              <span className={styles.value}>{content.instructor}</span>
-            </div>
-            <div className={styles.infoItem}>
               <span className={styles.label}>Duración</span>
               <span className={styles.value}>
                 {Math.floor(content.duration / 60)}h {content.duration % 60}m
@@ -239,29 +242,7 @@ export function ContentDetailPage() {
               {showQuiz && (content.type === 'lesson' || content.type === 'course') && (
                 <div className={styles.quizContainer}>
                   <QuizPlayer
-                    questions={[
-                      {
-                        id: '1',
-                        question: '¿Cuál es el propósito principal de React Hooks?',
-                        type: 'single',
-                        options: [
-                          'Reemplazar las clases',
-                          'Permitir usar estado y otras características en componentes funcionales',
-                          'Mejorar el rendimiento automáticamente',
-                          'Simplificar la sintaxis de JavaScript'
-                        ],
-                        correctAnswer: 'Permitir usar estado y otras características en componentes funcionales',
-                        explanation: 'React Hooks fueron introducidos para permitir que los componentes funcionales puedan tener estado y acceder a otras características de React que antes solo estaban disponibles en componentes de clase.'
-                      },
-                      {
-                        id: '2',
-                        question: '¿QuéHook se usa para manejar efectos secundarios?',
-                        type: 'single',
-                        options: ['useState', 'useEffect', 'useContext', 'useReducer'],
-                        correctAnswer: 'useEffect',
-                        explanation: 'useEffect es el Hook que se utiliza para manejar efectos secundarios en componentes funcionales, como llamadas a API o suscripciones.'
-                      }
-                    ]}
+                    skillId={content.category}
                     onComplete={handleQuizComplete}
                   />
                 </div>

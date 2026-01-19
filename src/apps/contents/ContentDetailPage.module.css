@@ -39,6 +39,7 @@
   border-radius: 0.5rem;
   padding: 1.5rem;
   margin-bottom: 2rem;
+  margin-top: 2rem;
 }
 
 .progressSection h3 {
@@ -159,7 +160,7 @@
 }
 
 .quizContainer {
-  margin: 2rem 0;
+  margin: 2rem 0 3rem 0;
 }
 
 .bookmarkSection {

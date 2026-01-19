@@ -25,39 +25,82 @@
 - ✅ Categorías (carrera, habilidad, proyecto, certificación)
 - ✅ Filtros por estado
 
-#### Catálogo de Contenidos (US-006)
+#### Catálogo de Contenidos (US-014)
 - ✅ Grid de contenidos con tarjetas
 - ✅ Búsqueda por texto
 - ✅ Filtros por categoría y nivel
 - ✅ Tipos de contenido (curso, lección, video, etc.)
 - ✅ Visualización de progreso
 
+#### Sistema de Favoritos (US-016)
+- ✅ Botón de guardar/quitar en detalle de contenido
+- ✅ Página de favoritos con lista de contenidos guardados
+- ✅ Búsqueda dentro de favoritos
+- ✅ Acceso a favoritos desde la página de contenidos
+- ✅ Eliminar de favoritos con un clic
+- ✅ Indicador visual de contenido guardado
+
+#### Sistema de Certificados
+- ✅ Página de certificados con lista y estadísticas
+- ✅ Modal de vista previa de certificado
+- ✅ Servicio de certificados con mock data
+- ✅ Funcionalidad de descarga y compartir
+- ✅ Sistema de verificación de certificados
+
+#### Sistema de Notificaciones
+- ✅ Botón de notificaciones en header
+- ✅ Página completa de notificaciones
+- ✅ Servicio de notificaciones con mock data
+- ✅ Estados: leído/no leído
+- ✅ Filtros por tipo
+- ✅ Preferencias de notificación
+
+#### Dashboard Mejorado
+- ✅ Navegación a certificados
+- ✅ Gráficos de progreso (tiempo de estudio, progreso por categoría, actividad semanal)
+- ✅ Estadísticas básicas conectadas
+- ✅ Actividad reciente
+- ✅ Todas las navegaciones conectadas
+
+#### Detalle de Contenido (US-014)
+- ✅ Página de detalle con información completa
+- ✅ VideoPlayer componente
+- ✅ QuizPlayer para evaluaciones
+- ✅ Lista de lecciones
+- ✅ Recursos descargables
+- ✅ Botón de iniciar/continuar
+
 ### ⚠️ Lo que necesita ajustes:
 
-#### Dashboard
-- ⚠️ Falta implementar navegación a contenidos (está pero no conectada)
-- ⚠️ Estadísticas básicas pero sin gráficos
-- ⚠️ Sin sistema de notificaciones
+#### Perfil de Usuario
+- ⚠️ Faltan más campos en el perfil (preferencias de aprendizaje)
+- ⚠️ Sin configuración de notificaciones en perfil
 
-#### Detalle de Contenido (US-007)
-- ❌ No implementada la página de detalle
-- ❌ Sin reproductor de video
-- ❌ Sin lista de lecciones
-- ❌ Sin recursos descargables
+#### Estadísticas
+- ⚠️ Estadísticas básicas implementadas pero podrían ser más detalladas
+- ⚠️ Sin exportación de datos
 
-### ❌ Lo que falta por implementar:
+### ❌ Lo que falta por implementar (según historias de usuario):
 
-#### Sistema de Progreso (US-008, US-009)
-- ❌ Gráficos de progreso
-- ❌ Tiempo de estudio tracking
-- ❌ Reportes detallados
-- ❌ Exportación de datos
+#### Gestión de Contenidos
+- ❌ US-011: Crear Dominio (admin)
+- ❌ US-012: Listar Skills de un dominio
+- ❌ US-013: Gestionar Prerrequisitos (admin)
+- ❌ US-015: Crear/Editar Contenido (admin)
 
-#### Funcionalidades Adicionales
-- ❌ Sistema de notificaciones
-- ❌ Certificados
-- ❌ Gamificación
-- ❌ Sistema de bookmarks
+#### Planificación Adaptativa
+- ❌ US-020: Generar Plan Inicial con IA
+- ❌ US-021: Replanificación Adaptativa
+- ❌ US-022: Ver Módulos del Plan
+- ❌ US-023: Actualizar Actividad
+
+#### Evaluación Adaptativa
+- ❌ US-031: Obtener Siguiente Ítem Adaptativo
+- ❌ US-034: Consultar Nivel de Dominio
+
+#### Tracking y Analítica
+- ❌ US-040: Registrar Eventos de Aprendizaje
+- ❌ US-041: Consultar Eventos (admin)
 
 ---
 
@@ -91,61 +134,73 @@ El diseño actual es consistente y cumple con los requisitos. Solo necesitamos:
 
 ---
 
-## 📋 Plan de Acción Priorizado
+## 📋 Plan de Acción Priorizado (Actualizado)
 
-### Fase 1: Completar Funcionalidades Críticas (Sprint 2)
+### ✅ Completado (Sprint 1-2):
+- ✅ Autenticación completa (US-001, US-002)
+- ✅ Gestión de Perfil (US-003)
+- ✅ Gestión de Objetivos (US-004, US-005)
+- ✅ Catálogo de Contenidos (US-014)
+- ✅ Sistema de Favoritos (US-016)
+- ✅ Dashboard con gráficos
+- ✅ Detalle de Contenido con VideoPlayer y QuizPlayer
+- ✅ Sistema de Notificaciones completo
+- ✅ Sistema de Certificados completo
 
-#### 1. Página de Detalle de Contenido (US-007) - Prioridad ALTA
-- [ ] Crear ContentDetailPage
-- [ ] Mostrar información completa del contenido
-- [ ] Lista de lecciones si es curso
-- [ ] Botón de iniciar/continuar
-- [ ] Recursos descargables
+### 🎯 Próximas Historias de Usuario (Sprint 3):
 
-#### 2. Mejorar Dashboard (US-008) - Prioridad ALTA
-- [ ] Añadir gráficos de progreso (usar Chart.js o similar)
-- [ ] Mostrar tiempo de estudio
-- [ ] Actividad reciente detallada
-- [ ] Conectar todas las navegaciones
+#### 1. US-012: Listar Skills de un Dominio - Prioridad ALTA
+- [ ] Crear página para ver skills por dominio
+- [ ] Mostrar prerrequisitos entre skills
+- [ ] Indicadores de progreso por skill
+- [ ] Filtros y búsqueda
 
-#### 3. Sistema de Notificaciones - Prioridad MEDIA
-- [ ] Componente NotificationToast
-- [ ] Alertas de objetivos
-- [ ] Recordatorios de estudio
-- [ ] Centro de notificaciones
+#### 2. US-020: Generar Plan Inicial - Prioridad ALTA
+- [ ] Integrar con motor de IA (mock)
+- [ ] Crear página de planes de aprendizaje
+- [ ] Mostrar módulos y actividades
+- [ ] Seguimiento de progreso
 
-### Fase 2: Funcionalidades Avanzadas (Sprint 3)
+#### 3. US-022: Ver Módulos del Plan - Prioridad ALTA
+- [ ] Vista detallada del plan actual
+- [ ] Lista de módulos con actividades
+- [ ] Estados de completitud
+- [ ] Navegación entre actividades
 
-#### 4. Estadísticas y Reportes (US-009) - Prioridad MEDIA
-- [ ] Página de estadísticas
-- [ ] Gráficos interactivos
-- [ ] Exportar a PDF
-- [ ] Comparativas de progreso
+#### 4. US-031: Obtener Siguiente Ítem Adaptativo - Prioridad MEDIA
+- [ ] Mejorar QuizPlayer con selección adaptativa
+- [ ] Integrar con motor de IA
+- [ ] Dificultad dinámica
+- [ ] Feedback mejorado
 
-#### 5. Gamificación - Prioridad BAJA
-- [ ] Sistema de puntos
-- [ ] Logros y badges
-- [ ] Tabla de líderes
-- [ ] Retos semanales
+#### 5. US-034: Consultar Nivel de Dominio - Prioridad MEDIA
+- [ ] Página de dominio por habilidad
+- [ ] Gráficos de progreso
+- [ ] Comparativas con promedio
+- [ ] Recomendaciones
 
-#### 6. Certificados - Prioridad MEDIA
-- [ ] Generador de certificados
-- [ ] Vista previa y descarga
-- [ ] Verificación de certificados
+### 📈 Métricas de Progreso Actual:
 
-### Fase 3: Mejoras Técnicas (Sprint 4)
+#### Historias de Usuario Completadas: 9/22 (41%)
+- ✅ US-001: Registro de Usuario
+- ✅ US-002: Consultar Perfil
+- ✅ US-003: Actualizar Perfil
+- ✅ US-004: Crear Objetivo
+- ✅ US-005: Actualizar Objetivo
+- ✅ US-014: Listar Contenidos
+- ✅ US-016: Sistema de Favoritos
+- ✅ US-030: Crear Sesión de Evaluación (con adaptatividad)
+- ✅ US-032: Enviar Respuesta (con IRT/CAT)
 
-#### 7. Optimización y Testing
-- [ ] Tests unitarios con Jest
-- [ ] Tests E2E con Playwright
-- [ ] Optimización de bundle
-- [ ] Implementar PWA
+#### Parcialmente Implementadas: 1/22
+- ⚠️ US-033: Feedback Personalizado (sin IA real)
 
-#### 8. Mejoras de UX
-- [ ] Skeleton loading states
-- [ ] Animaciones y transiciones
-- [ ] Accesibilidad mejorada
-- [ ] Dark mode opcional
+#### Porcentaje de Completitud: 41%
+
+### 🎯 Sprint 3 Objetivo:
+- Completar 3 historias más de Planificación Adaptativa
+- Implementar listado de Skills por dominio
+- Mejorar sistema de evaluación adaptativa
 
 ---
 
@@ -226,4 +281,5 @@ src/
 
 ---
 
-*Última actualización: 18 de Enero, 2026*
+*Última actualización: 18 de Enero, 2026 - 20:30*
+*Estado actual: 10/18 historias completadas (55%)*
