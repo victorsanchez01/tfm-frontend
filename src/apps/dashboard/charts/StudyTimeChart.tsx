@@ -108,9 +108,10 @@ export function StudyTimeChart({ data }: StudyTimeChartProps) {
           font: {
             size: 12,
           },
-          callback: (value: number) => {
-            const hours = Math.floor(value / 60)
-            const mins = value % 60
+          callback: (value: string | number) => {
+            const numValue = typeof value === 'string' ? parseInt(value) : value
+            const hours = Math.floor(numValue / 60)
+            const mins = numValue % 60
             return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`
           },
         },
