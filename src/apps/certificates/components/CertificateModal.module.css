@@ -1,0 +1,284 @@
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+}
+
+.modal {
+  background-color: #ffffff;
+  border-radius: 1rem;
+  max-width: 900px;
+  width: 100%;
+  max-height: 95vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.modalHeader h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.closeButton {
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  border-radius: 0.5rem;
+  transition: all 0.15s ease-in-out;
+}
+
+.closeButton:hover {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.certificatePreview {
+  padding: 2rem 2rem 5rem 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.certificate {
+  width: 100%;
+  max-width: 700px;
+  height: 650px;
+  background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.border {
+  width: 100%;
+  height: 100%;
+  border: 12px solid transparent;
+  border-image: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899) 1;
+  padding: 1rem 1rem 2rem 1rem;
+  position: relative;
+}
+
+.border::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  right: -8px;
+  bottom: -8px;
+  border: 2px solid #e2e8f0;
+  pointer-events: none;
+}
+
+.content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+  color: #3b82f6;
+}
+
+.certificateTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 0.5rem 0;
+  font-family: 'Georgia', serif;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  color: #6b7280;
+  margin: 0 0 0,5rem 0;
+  font-style: italic;
+}
+
+.student {
+  margin: 0rem 0 0.5rem 0;
+}
+
+.studentName {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #1f2937;
+  text-align: center;
+  margin: 0;
+  font-family: 'Georgia', serif;
+  text-decoration: underline;
+  text-underline-offset: 8px;
+}
+
+.body {
+  text-align: center;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.description {
+  font-size: 1.125rem;
+  color: #4b5563;
+  margin: 0 0 1rem 0;
+}
+
+.courseName {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 1rem 0;
+  font-family: 'Georgia', serif;
+}
+
+.details {
+  font-size: 1rem;
+  color: #4b5563;
+  margin: 0 0 0.5rem 0;
+}
+
+.score {
+  font-weight: 700;
+  color: #059669;
+}
+
+.duration {
+  font-size: 1rem;
+  color: #4b5563;
+  margin: 0;
+}
+
+.footer {
+  margin-top: 2rem;
+}
+
+.signatures {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 3rem;
+}
+
+.signature {
+  text-align: center;
+}
+
+.signature .line {
+  width: 200px;
+  height: 2px;
+  background-color: #9ca3af;
+  margin-bottom: 0.5rem;
+}
+
+.signature p {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 0.25rem 0;
+}
+
+.signature span {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.seal {
+  position: absolute;
+  bottom: 5rem;
+  right: 2rem;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #059669;
+  opacity: 0.8;
+}
+
+.verificationCode {
+  position: absolute;
+  bottom: -1.5rem;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+
+.verificationCode p {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: -3rem;
+  padding: 1.5rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+@media (max-width: 768px) {
+  .backdrop {
+    padding: 1rem;
+  }
+  
+  .certificate {
+    max-width: 100%;
+  }
+  
+  .border {
+    padding: 1rem;
+  }
+  
+  .certificateTitle {
+    font-size: 1.75rem;
+  }
+  
+  .studentName {
+    font-size: 1.5rem;
+  }
+  
+  .courseName {
+    font-size: 1.25rem;
+  }
+  
+  .signatures {
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  .signature .line {
+    width: 150px;
+  }
+  
+  .modalFooter {
+    flex-direction: column-reverse;
+  }
+}

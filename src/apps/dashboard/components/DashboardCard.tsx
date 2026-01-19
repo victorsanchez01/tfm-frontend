@@ -12,7 +12,7 @@ import styles from './DashboardCard.module.css'
 
 interface DashboardCardProps {
   icon: ReactNode
-  iconColor: 'blue' | 'emerald' | 'violet'
+  iconColor: 'blue' | 'emerald' | 'violet' | 'red' | 'orange' | 'pink' | 'yellow'
   title: string
   description: string
   buttonText: string
@@ -35,6 +35,14 @@ export function DashboardCard({
         return styles.iconEmerald
       case 'violet':
         return styles.iconViolet
+      case 'red':
+        return styles.iconRed
+      case 'orange':
+        return styles.iconOrange
+      case 'pink':
+        return styles.iconPink
+      case 'yellow':
+        return styles.iconYellow
       default:
         return styles.iconBlue
     }

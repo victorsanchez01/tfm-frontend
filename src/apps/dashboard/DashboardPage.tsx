@@ -219,6 +219,20 @@ export function DashboardPage() {
             buttonText="Ver estadísticas"
             onButtonClick={handleStatsClick}
           />
+          
+          <DashboardCard
+            icon={
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5h6l-6 6V5z" />
+              </svg>
+            }
+            iconColor="orange"
+            title="Certificados"
+            description="Gestiona tus logros y certificados"
+            buttonText="Ver certificados"
+            onButtonClick={() => navigate('/certificates')}
+          />
         </div>
 
         <div className={styles.chartsGrid}>

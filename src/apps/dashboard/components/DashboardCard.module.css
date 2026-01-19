@@ -55,6 +55,38 @@
   color: #7c3aed;
 }
 
+.iconRed {
+  background-color: #fee2e2;
+}
+
+.iconRed svg {
+  color: #dc2626;
+}
+
+.iconOrange {
+  background-color: #fed7aa;
+}
+
+.iconOrange svg {
+  color: #ea580c;
+}
+
+.iconPink {
+  background-color: #fce7f3;
+}
+
+.iconPink svg {
+  color: #db2777;
+}
+
+.iconYellow {
+  background-color: #fef3c7;
+}
+
+.iconYellow svg {
+  color: #f59e0b;
+}
+
 .cardTitle {
   margin-left: 0.75rem;
   font-size: 1.125rem;

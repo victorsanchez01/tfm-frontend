@@ -16,6 +16,7 @@ import { ContentsPage, ContentDetailPage } from '../contents'
 import { FavoritesPage } from '../favorites'
 import { StatsPage } from '../stats'
 import { NotificationsPage } from '../notifications/NotificationsPage'
+import { CertificatesPage } from '../certificates/CertificatesPage'
 
 export function AppRoutes() {
   return (
@@ -31,6 +32,7 @@ export function AppRoutes() {
       <Route path="/favorites" element={<FavoritesPage />} />
       <Route path="/stats" element={<StatsPage />} />
       <Route path="/notifications" element={<NotificationsPage />} />
+      <Route path="/certificates" element={<CertificatesPage />} />
       <Route path="/home" element={<HomePage />} />
     </Routes>
   )
