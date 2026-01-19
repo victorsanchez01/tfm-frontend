@@ -330,9 +330,17 @@
 
 .menuContainer {
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .menuButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
   padding: 0.5rem;
   background-color: transparent;
   border: 1px solid #e2e8f0;

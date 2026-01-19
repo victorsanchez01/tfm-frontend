@@ -3,7 +3,7 @@
 //  TFM Frontend
 //
 //  Created by Victor Sanchez on Jan 12, 2026.
-//  Copyright © 2026 Victor Sanchez. All rights reserved.
+//  Copyright 2026 Victor Sanchez. All rights reserved.
 //
 
 import { Routes, Route } from 'react-router-dom'
@@ -15,6 +15,7 @@ import { GoalsPage } from '../goals'
 import { ContentsPage, ContentDetailPage } from '../contents'
 import { FavoritesPage } from '../favorites'
 import { StatsPage } from '../stats'
+import { NotificationsPage } from '../notifications/NotificationsPage'
 
 export function AppRoutes() {
   return (
@@ -29,6 +30,7 @@ export function AppRoutes() {
       <Route path="/contents/:id" element={<ContentDetailPage />} />
       <Route path="/favorites" element={<FavoritesPage />} />
       <Route path="/stats" element={<StatsPage />} />
+      <Route path="/notifications" element={<NotificationsPage />} />
       <Route path="/home" element={<HomePage />} />
     </Routes>
   )

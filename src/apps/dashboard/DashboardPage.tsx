@@ -13,6 +13,7 @@ import { dashboardService, type DashboardStats, type ActivityItem } from '../../
 import { statsService, type StatsOverview as StatsOverviewType, type StudyTimeData, type ProgressData, type ActivityData } from '../../services/stats'
 import { DashboardCard } from './components/DashboardCard'
 import { ActivityList } from './components/ActivityList'
+import { NotificationButton } from './components/NotificationButton'
 import { StatsOverview, StudyTimeChart, ProgressChart, WeeklyActivityChart } from './charts'
 import styles from './DashboardPage.module.css'
 
@@ -116,6 +117,7 @@ export function DashboardPage() {
           </div>
           
           <div className={styles.menuContainer}>
+            <NotificationButton />
             <button 
               className={styles.menuButton}
               onMouseDown={(e) => {
