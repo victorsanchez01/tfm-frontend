@@ -23,6 +23,13 @@ export interface ActivityData {
   activities: number
 }
 
+export interface MonthlyProgressData {
+  month: string
+  totalHours: number
+  progressPercentage: number
+  completedContents: number
+}
+
 export interface StatsOverview {
   totalStudyTime: number // in minutes
   streakDays: number
@@ -74,6 +81,16 @@ const generateMockActivity = (): ActivityData[] => {
   return data
 }
 
+const generateMockMonthlyProgress = (): MonthlyProgressData[] => {
+  const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun']
+  return months.map((month) => ({
+    month,
+    totalHours: Math.floor(Math.random() * 40) + 10,
+    progressPercentage: Math.floor(Math.random() * 40) + 60,
+    completedContents: Math.floor(Math.random() * 5) + 2,
+  }))
+}
+
 export const statsService = {
   async getOverview(): Promise<StatsOverview> {
     await new Promise(resolve => setTimeout(resolve, 300))
@@ -101,17 +118,12 @@ export const statsService = {
   },
 
   async getWeeklyActivity(): Promise<ActivityData[]> {
-    await new Promise(resolve => setTimeout(resolve, 300))
+    await new Promise(resolve => setTimeout(resolve, 200))
     return generateMockActivity()
   },
 
-  async getMonthlyProgress(): Promise<{ month: string; progress: number }[]> {
-    await new Promise(resolve => setTimeout(resolve, 400))
-    
-    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun']
-    return months.map((month, index) => ({
-      month,
-      progress: Math.floor(Math.random() * 40) + 10 + (index * 5), // Progressive improvement
-    }))
+  async getMonthlyProgress(): Promise<MonthlyProgressData[]> {
+    await new Promise(resolve => setTimeout(resolve, 300))
+    return generateMockMonthlyProgress()
   },
 }
