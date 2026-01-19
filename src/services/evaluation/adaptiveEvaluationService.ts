@@ -104,12 +104,12 @@ class AdaptiveEvaluationService {
       type: 'multiple',
       options: [
         'Evita re-renders innecesarios',
-        'Memoiza el resultado de renderizado',
+        'Memoriza el resultado de renderizado',
         'Compara props superficialmente',
         'Reduce el tamaño del bundle'
       ],
-      correctAnswer: ['Evita re-renders innecesarios', 'Memoiza el resultado de renderizado', 'Compara props superficialmente'],
-      explanation: 'React.memo memoiza el resultado del renderizado y evita re-renders cuando las props no han cambiado.',
+      correctAnswer: ['Evita re-renders innecesarios', 'Memoriza el resultado de renderizado', 'Compara props superficialmente'],
+      explanation: 'React.memo memoriza el resultado del renderizado y evita re-renders cuando las props no han cambiado.',
       difficulty: 0.8,
       skillId: 'Frontend'
     },

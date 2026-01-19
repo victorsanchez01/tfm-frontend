@@ -340,11 +340,11 @@ Plataforma de aprendizaje impulsada por IA (AI-driven Learning Platform) con fro
 - [x] Incluye: explicación del concepto, por qué la respuesta era incorrecta, pista para entender
 - [x] El tono es pedagógico, positivo y motivador
 - [x] El feedback está contextualizado a la pregunta específica
-- [ ] El estudiante puede solicitar feedback adicional ("explicar de otra forma")
+- [x] El estudiante puede solicitar feedback adicional ("explicar de otra forma")
 - [x] Tiempo de generación menor a 3 segundos
 - [x] Para respuestas correctas, ofrece refuerzo positivo opcional
 
-**Estado:** ⚠️ Básico implementado (sin IA real)
+**Estado:** ✅ Completado (con mock para feedback alternativo)
 
 ---
 

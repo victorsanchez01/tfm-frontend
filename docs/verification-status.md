@@ -36,7 +36,7 @@
 | US-030 | Crear Sesión de Evaluación | ✅ IMPLEMENTADO | adaptiveEvaluationService con algoritmo IRT/CAT simplificado |
 | US-031 | Obtener Siguiente Ítem | ✅ IMPLEMENTADO | getNextQuestion() con selección adaptativa |
 | US-032 | Enviar Respuesta | ✅ IMPLEMENTADO | submitAnswer() actualiza nivel estimado |
-| US-033 | Feedback Personalizado | ✅ BÁSICO | Feedback simple en QuizPlayer (sin IA real) |
+| US-033 | Feedback Personalizado | ✅ IMPLEMENTADO | Botón "Explicar de otra forma" con mock para IA |
 | US-034 | Consultar Dominio | ❌ NO IMPLEMENTADO | No hay página de dominio por habilidad |
 
 ## Épica 5: Tracking y Analítica
@@ -49,10 +49,10 @@
 ## RESUMEN
 
 - **Total historias**: 22
-- **Completamente implementadas**: 9
-- **Parcialmente implementadas**: 1
+- **Completamente implementadas**: 10
+- **Parcialmente implementadas**: 0
 - **No implementadas**: 12
-- **Porcentaje de completitud**: 41%
+- **Porcentaje de completitud**: 45.5%
 
 ## Adicionales implementados (no en historias):
 - ✅ Sistema de Notificaciones completo

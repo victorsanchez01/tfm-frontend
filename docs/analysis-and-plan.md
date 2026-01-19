@@ -181,7 +181,7 @@ El diseño actual es consistente y cumple con los requisitos. Solo necesitamos:
 
 ### 📈 Métricas de Progreso Actual:
 
-#### Historias de Usuario Completadas: 9/22 (41%)
+#### Historias de Usuario Completadas: 10/22 (45.5%)
 - ✅ US-001: Registro de Usuario
 - ✅ US-002: Consultar Perfil
 - ✅ US-003: Actualizar Perfil
@@ -191,11 +191,11 @@ El diseño actual es consistente y cumple con los requisitos. Solo necesitamos:
 - ✅ US-016: Sistema de Favoritos
 - ✅ US-030: Crear Sesión de Evaluación (con adaptatividad)
 - ✅ US-032: Enviar Respuesta (con IRT/CAT)
+- ✅ US-033: Feedback Personalizado (con botón de alternativa)
 
-#### Parcialmente Implementadas: 1/22
-- ⚠️ US-033: Feedback Personalizado (sin IA real)
+#### Parcialmente Implementadas: 0/22
 
-#### Porcentaje de Completitud: 41%
+#### Porcentaje de Completitud: 45.5%
 
 ### 🎯 Sprint 3 Objetivo:
 - Completar 3 historias más de Planificación Adaptativa

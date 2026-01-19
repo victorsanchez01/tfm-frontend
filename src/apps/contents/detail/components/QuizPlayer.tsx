@@ -32,6 +32,7 @@ export function QuizPlayer({ skillId, onComplete }: QuizPlayerProps) {
   const [loading, setLoading] = useState(true)
   const [answerStartTime, setAnswerStartTime] = useState<Date>(new Date())
   const [currentLevel, setCurrentLevel] = useState(0.5)
+  const [loadingAlternativeFeedback, setLoadingAlternativeFeedback] = useState(false)
 
   const loadNextQuestion = useCallback((sessionId: string) => {
     setLoading(true)
@@ -108,6 +109,26 @@ export function QuizPlayer({ skillId, onComplete }: QuizPlayerProps) {
     if (!sessionId) return
     setQuestionNumber(prev => prev + 1)
     loadNextQuestion(sessionId)
+  }
+
+  const handleAlternativeFeedback = async () => {
+    setLoadingAlternativeFeedback(true)
+    
+    // TODO: Replace with actual AI API call when backend is ready
+    // For now, we'll simulate with a mock alternative explanation
+    await new Promise(resolve => setTimeout(resolve, 1500)) // Simulate API delay
+    
+    // Mock alternative feedback based on the current question
+    const alternativeFeedbacks = [
+      "Permíteme explicarlo de otra manera: Piensa en esto como construir con bloques. Cada concepto es un bloque que se apoya en el anterior. Si no entiendes un bloque, los siguientes no tendrán sentido.",
+      "Aquí hay otra perspectiva: Imagina que estás aprendiendo un nuevo idioma. Cada concepto nuevo es como una palabra nueva. Necesitas entender la palabra antes de poder formar oraciones significativas.",
+      "Veámoslo desde otro ángulo: Esto es similar a seguir una receta. Cada paso es crucial y debe entenderse antes de pasar al siguiente. Si omites un paso, el resultado final no será el esperado.",
+      "Déjame darte una analogía diferente: Es como resolver un rompecabezas. Cada pieza debe encajar en el lugar correcto. Si intentas forzar una pieza donde no pertenece, la imagen nunca se completará correctamente."
+    ]
+    
+    const randomAlternative = alternativeFeedbacks[Math.floor(Math.random() * alternativeFeedbacks.length)]
+    setFeedback(randomAlternative)
+    setLoadingAlternativeFeedback(false)
   }
 
   if (loading) {
@@ -201,6 +222,22 @@ export function QuizPlayer({ skillId, onComplete }: QuizPlayerProps) {
             </span>
           </div>
           <p>{feedback}</p>
+          {!isCorrect && (
+            <button 
+              className={styles.alternativeFeedbackButton}
+              onClick={handleAlternativeFeedback}
+              disabled={loadingAlternativeFeedback}
+            >
+              {loadingAlternativeFeedback ? (
+                <>
+                  <span className={styles.spinner}></span>
+                  Generando nueva explicación...
+                </>
+              ) : (
+                'Explicar de otra forma'
+              )}
+            </button>
+          )}
         </div>
       )}
 
