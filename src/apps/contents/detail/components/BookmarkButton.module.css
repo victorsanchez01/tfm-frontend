@@ -1,0 +1,66 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.bookmark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  color: #6b7280;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  width: 100%;
+}
+
+.bookmark:hover {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.bookmark.bookmarked {
+  background-color: #fef3c7;
+  border-color: #f59e0b;
+  color: #d97706;
+}
+
+.bookmark.bookmarked:hover {
+  background-color: #fde68a;
+}
+
+.bookmark.animating {
+  animation: bookmarkPulse 0.3s ease-in-out;
+}
+
+@keyframes bookmarkPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.link {
+  font-size: 0.75rem;
+  color: #3b82f6;
+  text-decoration: none;
+  text-align: center;
+  transition: color 0.15s ease-in-out;
+}
+
+.link:hover {
+  color: #2563eb;
+  text-decoration: underline;
+}

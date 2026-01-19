@@ -11,7 +11,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Button } from '@shared/ui'
 import { getStoredAccessToken } from '../../services/auth/authService'
 import { contentsService, type Content, type Course } from '../../services/contents/contentsService'
-import { ContentHeader, ContentTabs, LessonList, ResourceList } from './detail'
+import { ContentHeader, ContentTabs, LessonList, ResourceList, VideoPlayer, QuizPlayer, BookmarkButton } from './detail'
 import styles from './ContentDetailPage.module.css'
 
 export function ContentDetailPage() {
@@ -21,6 +21,9 @@ export function ContentDetailPage() {
   const [content, setContent] = useState<Content | null>(null)
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'overview' | 'lessons' | 'resources'>('overview')
+  const [isBookmarked, setIsBookmarked] = useState(false)
+  const [showVideo, setShowVideo] = useState(false)
+  const [showQuiz, setShowQuiz] = useState(false)
 
   useEffect(() => {
     if (!token) {
@@ -76,6 +79,27 @@ export function ContentDetailPage() {
     } catch (error) {
       console.error('Error completing lesson:', error)
     }
+  }
+
+  const handleBookmarkToggle = () => {
+    setIsBookmarked(!isBookmarked)
+    // TODO: Save bookmark to backend
+  }
+
+  const handleVideoProgress = (progress: number) => {
+    console.log('Video progress:', progress)
+    // TODO: Update progress tracking
+  }
+
+  const handleVideoComplete = () => {
+    console.log('Video completed')
+    // TODO: Mark as completed
+  }
+
+  const handleQuizComplete = (score: number, total: number) => {
+    console.log(`Quiz completed: ${score}/${total}`)
+    setShowQuiz(false)
+    // TODO: Save quiz results
   }
 
   if (!token) {
@@ -161,6 +185,14 @@ export function ContentDetailPage() {
               </span>
             </div>
           </div>
+
+          <div className={styles.bookmarkSection}>
+            <BookmarkButton 
+              isBookmarked={isBookmarked} 
+              onToggle={handleBookmarkToggle}
+              showLink={true}
+            />
+          </div>
         </div>
 
         <div className={styles.content}>
@@ -177,6 +209,63 @@ export function ContentDetailPage() {
                 <h2>Descripción</h2>
                 <p>{content.description}</p>
               </div>
+
+              {content.type === 'video' && (
+                <div className={styles.mediaActions}>
+                  <Button onClick={() => setShowVideo(!showVideo)}>
+                    {showVideo ? 'Ocultar video' : 'Ver video'}
+                  </Button>
+                </div>
+              )}
+
+              {(content.type === 'lesson' || content.type === 'course') && (
+                <div className={styles.mediaActions}>
+                  <Button onClick={() => setShowQuiz(!showQuiz)}>
+                    {showQuiz ? 'Ocultar quiz' : 'Tomar quiz'}
+                  </Button>
+                </div>
+              )}
+
+              {showVideo && content.type === 'video' && (
+                <div className={styles.videoContainer}>
+                  <VideoPlayer
+                    url="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                    onProgress={handleVideoProgress}
+                    onComplete={handleVideoComplete}
+                  />
+                </div>
+              )}
+
+              {showQuiz && (content.type === 'lesson' || content.type === 'course') && (
+                <div className={styles.quizContainer}>
+                  <QuizPlayer
+                    questions={[
+                      {
+                        id: '1',
+                        question: '¿Cuál es el propósito principal de React Hooks?',
+                        type: 'single',
+                        options: [
+                          'Reemplazar las clases',
+                          'Permitir usar estado y otras características en componentes funcionales',
+                          'Mejorar el rendimiento automáticamente',
+                          'Simplificar la sintaxis de JavaScript'
+                        ],
+                        correctAnswer: 'Permitir usar estado y otras características en componentes funcionales',
+                        explanation: 'React Hooks fueron introducidos para permitir que los componentes funcionales puedan tener estado y acceder a otras características de React que antes solo estaban disponibles en componentes de clase.'
+                      },
+                      {
+                        id: '2',
+                        question: '¿QuéHook se usa para manejar efectos secundarios?',
+                        type: 'single',
+                        options: ['useState', 'useEffect', 'useContext', 'useReducer'],
+                        correctAnswer: 'useEffect',
+                        explanation: 'useEffect es el Hook que se utiliza para manejar efectos secundarios en componentes funcionales, como llamadas a API o suscripciones.'
+                      }
+                    ]}
+                    onComplete={handleQuizComplete}
+                  />
+                </div>
+              )}
 
               <div className={styles.tags}>
                 <h3>Etiquetas</h3>

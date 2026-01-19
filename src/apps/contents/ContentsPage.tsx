@@ -110,7 +110,18 @@ export function ContentsPage() {
     <div className={styles.container}>
       <header className={styles.header}>
         <div className={styles.headerContent}>
-          <h1 className={styles.title}>Catálogo de Contenidos</h1>
+          <div className={styles.titleSection}>
+            <h1 className={styles.title}>Catálogo de Contenidos</h1>
+            <button 
+              onClick={() => navigate('/favorites')}
+              className={styles.favoritesButton}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2v16z" />
+              </svg>
+              <span>Ver favoritos</span>
+            </button>
+          </div>
           <Button variant="secondary" onClick={() => navigate('/dashboard')}>
             Volver al dashboard
           </Button>

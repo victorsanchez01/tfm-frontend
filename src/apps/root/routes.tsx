@@ -13,6 +13,7 @@ import { DashboardPage } from '../dashboard'
 import { ProfilePage } from '../profile'
 import { GoalsPage } from '../goals'
 import { ContentsPage, ContentDetailPage } from '../contents'
+import { FavoritesPage } from '../favorites'
 
 export function AppRoutes() {
   return (
@@ -25,6 +26,7 @@ export function AppRoutes() {
       <Route path="/goals" element={<GoalsPage />} />
       <Route path="/contents" element={<ContentsPage />} />
       <Route path="/contents/:id" element={<ContentDetailPage />} />
+      <Route path="/favorites" element={<FavoritesPage />} />
       <Route path="/home" element={<HomePage />} />
     </Routes>
   )

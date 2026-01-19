@@ -199,6 +199,23 @@ Plataforma de aprendizaje impulsada por IA (AI-driven Learning Platform) con fro
 
 ---
 
+#### US-016: Sistema de Favoritos
+**Como** estudiante  
+**Quiero** guardar contenidos como favoritos  
+**Para** poder acceder rápidamente a ellos más tarde
+
+**Criterios de Aceptación:**
+- [x] Botón de guardar/quitar en detalle de contenido
+- [x] Página de favoritos con lista de contenidos guardados
+- [x] Búsqueda dentro de favoritos
+- [x] Acceso a favoritos desde la página de contenidos
+- [x] Eliminar de favoritos con un clic
+- [x] Indicador visual de contenido guardado
+
+**Estado:** ✅ Completado
+
+---
+
 ### Épica 3: Planificación Adaptativa
 
 #### US-020: Generar Plan Inicial

@@ -19,6 +19,12 @@
   padding-bottom: 1rem;
 }
 
+.titleSection {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
 .title {
   font-size: 1.5rem;
   font-weight: 600;
@@ -46,4 +52,24 @@
   font-size: 0.875rem;
   color: #64748b;
   margin: 0;
+}
+
+.favoritesButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: 0.5rem;
+  color: #d97706;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.favoritesButton:hover {
+  background-color: #fde68a;
+  color: #92400e;
 }
