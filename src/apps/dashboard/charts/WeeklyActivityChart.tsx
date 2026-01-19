@@ -15,6 +15,7 @@ import {
   Tooltip,
 } from 'chart.js'
 import { Bar } from 'react-chartjs-2'
+import type { TooltipItem } from 'chart.js'
 import { type ActivityData } from '../../../services/stats/statsService'
 import styles from './WeeklyActivityChart.module.css'
 
@@ -60,8 +61,9 @@ export function WeeklyActivityChart({ data }: WeeklyActivityChartProps) {
         borderWidth: 1,
         displayColors: false,
         callbacks: {
-          label: (context: { parsed: { y: number } }) => {
-            const activities = context.parsed.y
+          label: (context: TooltipItem<'bar'>) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const activities = (context.parsed as any).y ?? 0
             return `${activities} ${activities === 1 ? 'actividad' : 'actividades'}`
           },
         },

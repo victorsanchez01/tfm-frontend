@@ -16,6 +16,7 @@ import {
   Legend,
 } from 'chart.js'
 import { Bar } from 'react-chartjs-2'
+import type { TooltipItem } from 'chart.js'
 import { type ProgressData } from '../../../services/stats/statsService'
 import styles from './ProgressChart.module.css'
 
@@ -77,9 +78,10 @@ export function ProgressChart({ data }: ProgressChartProps) {
         borderColor: '#3b82f6',
         borderWidth: 1,
         callbacks: {
-          label: (context: { parsed: { y: number } }) => {
+          label: (context: TooltipItem<'bar'>) => {
             const label = context.dataset.label || ''
-            const value = context.parsed.y
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const value = (context.parsed as any).y ?? 0
             return `${label}: ${value} cursos`
           },
         },

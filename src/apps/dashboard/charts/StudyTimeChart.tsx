@@ -18,6 +18,7 @@ import {
   Filler,
 } from 'chart.js'
 import { Line } from 'react-chartjs-2'
+import type { TooltipItem } from 'chart.js'
 import { type StudyTimeData } from '../../../services/stats/statsService'
 import styles from './StudyTimeChart.module.css'
 
@@ -75,8 +76,9 @@ export function StudyTimeChart({ data }: StudyTimeChartProps) {
         borderWidth: 1,
         displayColors: false,
         callbacks: {
-          label: (context: { parsed: { y: number } }) => {
-            const minutes = context.parsed.y
+          label: (context: TooltipItem<'line'>) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const minutes = (context.parsed as any).y ?? 0
             const hours = Math.floor(minutes / 60)
             const mins = minutes % 60
             return `${hours}h ${mins}m`
