@@ -18,6 +18,7 @@ import styles from './AuthPage.module.css'
 export function LoginPage() {
   const navigate = useNavigate()
   const [globalError, setGlobalError] = useState<string>()
+  const [sessionExpired, setSessionExpired] = useState(false)
   const [isFormValid, setIsFormValid] = useState(false)
 
   const {
@@ -32,6 +33,13 @@ export function LoginPage() {
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const watchedFields = watch()
+
+  useEffect(() => {
+    if (sessionStorage.getItem('session_expired')) {
+      setSessionExpired(true)
+      sessionStorage.removeItem('session_expired')
+    }
+  }, [])
 
   useEffect(() => {
     const isEmailValid = !!watchedFields.email && !errors.email
@@ -65,6 +73,11 @@ export function LoginPage() {
           <Link to="/register">Regístrate</Link>
         </p>
         <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+          {sessionExpired && (
+            <div className={styles.warningBox}>
+              <div className={styles.warningText}>Tu sesión ha expirado. Por favor inicia sesión nuevamente.</div>
+            </div>
+          )}
           {globalError && (
             <div className={styles.errorBox}>
               <div className={styles.errorText}>{globalError}</div>

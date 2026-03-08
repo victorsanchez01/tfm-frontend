@@ -23,7 +23,7 @@ export function DashboardPageSimple() {
 
   const handleLogout = () => {
     clearTokens()
-    navigate('/login')
+    window.location.href = '/login'
   }
 
   if (!token) {

@@ -75,7 +75,7 @@ export function DashboardPage() {
 
   const handleLogout = () => {
     clearTokens()
-    navigate('/login')
+    window.location.href = '/login'
   }
 
   const handleGoalsClick = () => {
@@ -147,11 +147,12 @@ export function DashboardPage() {
                   </svg>
                   Perfil
                 </button>
-                <button 
+                <button
                   className={styles.menuItem}
-                  onClick={() => {
+                  onMouseDown={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
                     handleLogout()
-                    setShowMenu(false)
                   }}
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">

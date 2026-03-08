@@ -35,6 +35,19 @@ export class HttpClient {
 
     const response = await fetch(url, config)
 
+    if (response.status === 401) {
+      localStorage.removeItem('tfm_access_token')
+      localStorage.removeItem('tfm_refresh_token')
+      localStorage.removeItem('user_id')
+      localStorage.removeItem('display_name')
+      localStorage.removeItem('email')
+      delete this.defaultHeaders['Authorization']
+      delete this.defaultHeaders['X-User-Id']
+      sessionStorage.setItem('session_expired', 'true')
+      window.location.href = '/login'
+      throw new Error('SESSION_EXPIRED')
+    }
+
     if (!response.ok) {
       const error = await response.json().catch(() => ({}))
       throw new Error(error.message || `HTTP error! status: ${response.status}`)
