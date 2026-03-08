@@ -12,7 +12,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm, Controller } from 'react-hook-form'
 import { registerSchema, type RegisterInput } from '@shared/validations'
 import { Button, Input } from '@shared/ui'
-import { register, storeTokens } from '../../services/auth/authService'
+import { register } from '../../services/auth/authService'
 import styles from './AuthPage.module.css'
 
 export function RegisterPage() {
@@ -44,12 +44,16 @@ export function RegisterPage() {
   const onSubmit = async (data: RegisterInput) => {
     try {
       setGlobalError(undefined)
-      const response = await register(data)
-      storeTokens(response)
-      navigate('/dashboard')
+      await register(data)
+      navigate('/login')
     } catch (err) {
-      if (err instanceof Error && err.message === 'USER_EXISTS') {
-        setGlobalError('El email ya está registrado')
+      console.error('Registration error:', err)
+      if (err instanceof Error) {
+        if (err.message === 'USER_EXISTS') {
+          setGlobalError('El email ya está registrado')
+        } else {
+          setGlobalError(`Error: ${err.message}`)
+        }
       } else {
         setGlobalError('Ocurrió un error al registrarse')
       }

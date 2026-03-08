@@ -6,6 +6,8 @@
 //  Copyright © 2026 Victor Sanchez. All rights reserved.
 //
 
+import { httpClient, USE_REAL_API } from '../api/httpClient'
+
 export interface Content {
   id: string
   title: string
@@ -43,6 +45,103 @@ export interface Resource {
   url: string
 }
 
+// Backend DTOs
+interface BackendContentItem {
+  id: string
+  title: string
+  description: string
+  contentType: string
+  difficulty: string
+  estimatedMinutes: number
+  domainId?: string
+  metadata?: Record<string, unknown>
+  active?: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+interface BackendPage<T> {
+  content: T[]
+  totalElements: number
+  totalPages: number
+}
+
+interface BackendTrackingEvent {
+  userId: string
+  contentItemId: string
+  eventType: string
+  timestamp?: string
+}
+
+const mapContentType = (contentType: string): Content['type'] => {
+  const map: Record<string, Content['type']> = {
+    COURSE: 'course',
+    VIDEO: 'video',
+    ARTICLE: 'article',
+    QUIZ: 'quiz',
+    LESSON: 'lesson',
+  }
+  return map[contentType?.toUpperCase()] || 'course'
+}
+
+const mapDifficulty = (difficulty: string): Content['level'] => {
+  const map: Record<string, Content['level']> = {
+    BEGINNER: 'beginner',
+    INTERMEDIATE: 'intermediate',
+    ADVANCED: 'advanced',
+  }
+  return map[difficulty?.toUpperCase()] || 'beginner'
+}
+
+const adaptContent = (item: BackendContentItem): Content => ({
+  id: item.id,
+  title: item.title,
+  description: item.description,
+  type: mapContentType(item.contentType),
+  category: item.domainId || 'General',
+  level: mapDifficulty(item.difficulty),
+  duration: item.estimatedMinutes || 0,
+  progress: 0,
+  status: 'not_started',
+  thumbnail: '',
+  tags: [],
+  createdAt: item.createdAt,
+  updatedAt: item.updatedAt,
+})
+
+// Real API implementation
+const getContentsAPI = async (): Promise<Content[]> => {
+  const page = await httpClient.get<BackendPage<BackendContentItem>>(
+    '/content/content-items?page=0&size=50'
+  )
+  return page.content.map(adaptContent)
+}
+
+const getContentAPI = async (id: string): Promise<Content | null> => {
+  const item = await httpClient
+    .get<BackendContentItem>(`/content/content-items/${id}`)
+    .catch(() => null)
+  return item ? adaptContent(item) : null
+}
+
+const updateProgressAPI = async (id: string, progress: number): Promise<Content> => {
+  const userId = localStorage.getItem('user_id') || ''
+  const eventType = progress >= 100 ? 'CONTENT_COMPLETED' : 'CONTENT_STARTED'
+  const event: BackendTrackingEvent = {
+    userId,
+    contentItemId: id,
+    eventType,
+    timestamp: new Date().toISOString(),
+  }
+  await httpClient.post('/tracking/events', event)
+  const content = await getContentAPI(id)
+  if (!content) throw new Error('Content not found')
+  content.progress = progress
+  content.status = progress >= 100 ? 'completed' : progress > 0 ? 'in_progress' : 'not_started'
+  return content
+}
+
+// Mock data
 const mockContents: Content[] = [
   {
     id: '1',
@@ -104,286 +203,60 @@ const mockContents: Content[] = [
     createdAt: '2024-01-10',
     updatedAt: '2024-01-10',
   },
-  {
-    id: '5',
-    title: 'Introducción a Python',
-    description: 'Los fundamentos de programación con Python',
-    type: 'video',
-    category: 'Python',
-    level: 'beginner',
-    duration: 60,
-    progress: 0,
-    status: 'not_started',
-    thumbnail: 'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=400',
-    tags: ['python', 'programming', 'basics'],
-    createdAt: '2024-01-12',
-    updatedAt: '2024-01-12',
-  },
-]
-
-const mockCourses: Course[] = [
-  {
-    ...mockContents[0],
-    type: 'course',
-    totalLessons: 5,
-    completedLessons: 3,
-    lessons: [
-      {
-        id: '1-1',
-        title: 'Introducción a los Hooks',
-        description: 'Conceptos básicos y motivación detrás de React Hooks',
-        type: 'lesson',
-        category: 'Frontend',
-        level: 'intermediate',
-        duration: 30,
-        progress: 100,
-        status: 'completed',
-        thumbnail: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=400',
-        tags: ['react', 'hooks'],
-        createdAt: '2024-01-01',
-        updatedAt: '2024-01-02',
-        courseId: '1',
-        resources: [],
-      },
-      {
-        id: '1-2',
-        title: 'useState y useEffect',
-        description: 'Los hooks más fundamentales de React',
-        type: 'lesson',
-        category: 'Frontend',
-        level: 'intermediate',
-        duration: 45,
-        progress: 100,
-        status: 'completed',
-        thumbnail: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=400',
-        tags: ['react', 'hooks', 'state'],
-        createdAt: '2024-01-03',
-        updatedAt: '2024-01-04',
-        courseId: '1',
-        resources: [],
-      },
-      {
-        id: '1-3',
-        title: 'useContext y useReducer',
-        description: 'Manejo de estado complejo con hooks',
-        type: 'lesson',
-        category: 'Frontend',
-        level: 'intermediate',
-        duration: 50,
-        progress: 100,
-        status: 'completed',
-        thumbnail: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=400',
-        tags: ['react', 'hooks', 'context'],
-        createdAt: '2024-01-05',
-        updatedAt: '2024-01-06',
-        courseId: '1',
-        resources: [],
-      },
-      {
-        id: '1-4',
-        title: 'Custom Hooks',
-        description: 'Creando tus propios hooks reutilizables',
-        type: 'lesson',
-        category: 'Frontend',
-        level: 'intermediate',
-        duration: 55,
-        progress: 50,
-        status: 'in_progress',
-        thumbnail: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=400',
-        tags: ['react', 'hooks', 'custom'],
-        createdAt: '2024-01-07',
-        updatedAt: '2024-01-08',
-        courseId: '1',
-        resources: [],
-      },
-      {
-        id: '1-5',
-        title: 'Hooks Optimización',
-        description: 'useMemo, useCallback y patrones de optimización',
-        type: 'lesson',
-        category: 'Frontend',
-        level: 'intermediate',
-        duration: 60,
-        progress: 0,
-        status: 'not_started',
-        thumbnail: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=400',
-        tags: ['react', 'hooks', 'optimization'],
-        createdAt: '2024-01-09',
-        updatedAt: '2024-01-10',
-        courseId: '1',
-        resources: [],
-      },
-    ],
-  },
-  {
-    ...mockContents[1],
-    type: 'course',
-    totalLessons: 6,
-    completedLessons: 2,
-    lessons: [
-      {
-        id: '2-1',
-        title: 'Tipos Básicos y Avanzados',
-        description: 'Deep dive en el sistema de tipos de TypeScript',
-        type: 'lesson',
-        category: 'Lenguajes',
-        level: 'advanced',
-        duration: 40,
-        progress: 100,
-        status: 'completed',
-        thumbnail: 'https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=400',
-        tags: ['typescript', 'types'],
-        createdAt: '2024-01-05',
-        updatedAt: '2024-01-06',
-        courseId: '2',
-        resources: [],
-      },
-      {
-        id: '2-2',
-        title: 'Generics y Tipos Condicionales',
-        description: 'Creando tipos flexibles y reutilizables',
-        type: 'lesson',
-        category: 'Lenguajes',
-        level: 'advanced',
-        duration: 50,
-        progress: 100,
-        status: 'completed',
-        thumbnail: 'https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=400',
-        tags: ['typescript', 'generics'],
-        createdAt: '2024-01-07',
-        updatedAt: '2024-01-08',
-        courseId: '2',
-        resources: [],
-      },
-      {
-        id: '2-3',
-        title: 'Decoradores y Metaprogramación',
-        description: 'Añadiendo metadatos y comportamiento con decoradores',
-        type: 'lesson',
-        category: 'Lenguajes',
-        level: 'advanced',
-        duration: 60,
-        progress: 0,
-        status: 'not_started',
-        thumbnail: 'https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=400',
-        tags: ['typescript', 'decorators'],
-        createdAt: '2024-01-09',
-        updatedAt: '2024-01-10',
-        courseId: '2',
-        resources: [],
-      },
-      {
-        id: '2-4',
-        title: 'Patrones de Diseño en TypeScript',
-        description: 'Implementando patrones comunes con TypeScript',
-        type: 'lesson',
-        category: 'Lenguajes',
-        level: 'advanced',
-        duration: 55,
-        progress: 0,
-        status: 'not_started',
-        thumbnail: 'https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=400',
-        tags: ['typescript', 'patterns'],
-        createdAt: '2024-01-11',
-        updatedAt: '2024-01-12',
-        courseId: '2',
-        resources: [],
-      },
-      {
-        id: '2-5',
-        title: 'TypeScript con React',
-        description: 'Tipado robusto en aplicaciones React',
-        type: 'lesson',
-        category: 'Lenguajes',
-        level: 'advanced',
-        duration: 50,
-        progress: 0,
-        status: 'not_started',
-        thumbnail: 'https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=400',
-        tags: ['typescript', 'react'],
-        createdAt: '2024-01-13',
-        updatedAt: '2024-01-14',
-        courseId: '2',
-        resources: [],
-      },
-      {
-        id: '2-6',
-        title: 'Proyecto Final',
-        description: 'Construyendo una librería con TypeScript',
-        type: 'lesson',
-        category: 'Lenguajes',
-        level: 'advanced',
-        duration: 65,
-        progress: 0,
-        status: 'not_started',
-        thumbnail: 'https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=400',
-        tags: ['typescript', 'project'],
-        createdAt: '2024-01-15',
-        updatedAt: '2024-01-16',
-        courseId: '2',
-        resources: [],
-      },
-    ],
-  },
 ]
 
 export const contentsService = {
   async getContents(): Promise<Content[]> {
+    if (USE_REAL_API) return getContentsAPI()
     await new Promise(resolve => setTimeout(resolve, 500))
     return [...mockContents]
   },
 
   async getContent(id: string): Promise<Content | null> {
+    if (USE_REAL_API) return getContentAPI(id)
     await new Promise(resolve => setTimeout(resolve, 300))
-    
-    // First try to find in courses
-    const course = mockCourses.find(c => c.id === id)
-    if (course) return course
-    
-    // Then try in general contents
     return mockContents.find(c => c.id === id) || null
   },
 
   async getCourses(): Promise<Course[]> {
-    await new Promise(resolve => setTimeout(resolve, 400))
-    return mockContents.filter(c => c.type === 'course') as Course[]
+    const contents = await this.getContents()
+    return contents.filter(c => c.type === 'course') as Course[]
   },
 
   async getLessons(): Promise<Lesson[]> {
-    await new Promise(resolve => setTimeout(resolve, 400))
-    return mockContents.filter(c => c.type === 'lesson') as Lesson[]
+    const contents = await this.getContents()
+    return contents.filter(c => c.type === 'lesson') as Lesson[]
   },
 
   async updateProgress(id: string, progress: number): Promise<Content> {
+    if (USE_REAL_API) return updateProgressAPI(id, progress)
     await new Promise(resolve => setTimeout(resolve, 600))
-    
     const content = mockContents.find(c => c.id === id)
     if (!content) throw new Error('Content not found')
-    
     content.progress = progress
     content.status = progress === 100 ? 'completed' : progress > 0 ? 'in_progress' : 'not_started'
     content.updatedAt = new Date().toISOString().split('T')[0]
-    
     return { ...content }
   },
 
   async getContentsByCategory(category: string): Promise<Content[]> {
-    await new Promise(resolve => setTimeout(resolve, 400))
-    return mockContents.filter(c => c.category === category)
+    const contents = await this.getContents()
+    return contents.filter(c => c.category === category)
   },
 
   async getContentsByLevel(level: string): Promise<Content[]> {
-    await new Promise(resolve => setTimeout(resolve, 400))
-    return mockContents.filter(c => c.level === level)
+    const contents = await this.getContents()
+    return contents.filter(c => c.level === level)
   },
 
   async searchContents(query: string): Promise<Content[]> {
-    await new Promise(resolve => setTimeout(resolve, 500))
+    const contents = await this.getContents()
     const lowercaseQuery = query.toLowerCase()
-    return mockContents.filter(c => 
-      c.title.toLowerCase().includes(lowercaseQuery) ||
-      c.description.toLowerCase().includes(lowercaseQuery) ||
-      c.tags.some(tag => tag.toLowerCase().includes(lowercaseQuery))
+    return contents.filter(
+      c =>
+        c.title.toLowerCase().includes(lowercaseQuery) ||
+        c.description.toLowerCase().includes(lowercaseQuery) ||
+        c.tags.some(tag => tag.toLowerCase().includes(lowercaseQuery))
     )
   },
 }
