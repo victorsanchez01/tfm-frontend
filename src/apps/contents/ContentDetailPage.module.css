@@ -42,11 +42,31 @@
   margin-top: 2rem;
 }
 
-.progressSection h3 {
+.progressHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.progressHeader h3 {
   font-size: 0.875rem;
   font-weight: 600;
   color: #374151;
-  margin: 0 0 1rem 0;
+  margin: 0;
+}
+
+.progressValue {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #3b82f6;
+}
+
+.progressSlider {
+  width: 100%;
+  margin-top: 0.75rem;
+  accent-color: #3b82f6;
+  cursor: pointer;
 }
 
 .progressBar {

@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Button } from '@shared/ui'
 import { getStoredAccessToken } from '../../services/auth/authService'
-import { contentsService, type Content, type Course } from '../../services/contents/contentsService'
+import { contentsService, startContent, completeContent, type Content, type Course } from '../../services/contents/contentsService'
 import { ContentHeader, ContentTabs, LessonList, ResourceList, VideoPlayer, QuizPlayer, BookmarkButton } from './detail'
 import styles from './ContentDetailPage.module.css'
 
@@ -56,29 +56,15 @@ export function ContentDetailPage() {
   }
 
   const handleStartContent = async () => {
-    if (!content) return
-
-    try {
-      // Update progress to 1% to mark as started
-      await contentsService.updateProgress(content.id, content.progress > 0 ? content.progress : 1)
-      setContent(prev => prev ? { ...prev, progress: prev.progress > 0 ? prev.progress : 1 } : null)
-    } catch (error) {
-      console.error('Error starting content:', error)
-    }
+    if (!content || content.status !== 'not_started') return
+    setContent(prev => prev ? { ...prev, status: 'in_progress', progress: 50 } : null)
+    startContent(content.id).catch(console.error)
   }
 
-  const handleCompleteLesson = async () => {
+  const handleCompleteContent = async () => {
     if (!content) return
-
-    try {
-      // In a real app, this would mark the specific lesson as complete
-      // For now, we'll just update the overall progress
-      const newProgress = Math.min(content.progress + 10, 100)
-      await contentsService.updateProgress(content.id, newProgress)
-      setContent(prev => prev ? { ...prev, progress: newProgress } : null)
-    } catch (error) {
-      console.error('Error completing lesson:', error)
-    }
+    setContent(prev => prev ? { ...prev, status: 'completed', progress: 100 } : null)
+    completeContent(content.id).catch(console.error)
   }
 
   const handleBookmarkToggle = () => {
@@ -149,27 +135,35 @@ export function ContentDetailPage() {
       <main className={styles.main}>
         <div className={styles.sidebar}>
           <div className={styles.actions}>
-            {content.status === 'not_started' ? (
+            {content.status === 'not_started' && (
               <Button onClick={handleStartContent} className={styles.startButton}>
                 Comenzar ahora
               </Button>
-            ) : (
-              <Button onClick={handleStartContent} className={styles.continueButton}>
-                {content.progress === 100 ? 'Ver de nuevo' : 'Continuar'}
+            )}
+            {content.status === 'in_progress' && (
+              <Button onClick={handleCompleteContent} className={styles.continueButton}>
+                Marcar como completado
+              </Button>
+            )}
+            {content.status === 'completed' && (
+              <Button variant="secondary" className={styles.startButton} onClick={handleStartContent}>
+                Ver de nuevo
               </Button>
             )}
           </div>
 
-          {content.progress > 0 && (
+          {content.status !== 'not_started' && (
             <div className={styles.progressSection}>
-              <h3>Tu progreso</h3>
+              <div className={styles.progressHeader}>
+                <h3>Tu progreso</h3>
+                <span className={styles.progressValue}>{content.progress}%</span>
+              </div>
               <div className={styles.progressBar}>
                 <div
                   className={styles.progressFill}
                   style={{ width: `${content.progress}%` }}
-                ></div>
+                />
               </div>
-              <p className={styles.progressText}>{content.progress}% completado</p>
             </div>
           )}
 

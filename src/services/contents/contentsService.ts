@@ -46,31 +46,86 @@ export interface Resource {
 }
 
 // Backend DTOs
+interface BackendDomain {
+  code: string
+  name: string
+  description?: string
+}
+
 interface BackendContentItem {
   id: string
   title: string
   description: string
-  contentType: string
-  difficulty: string
+  type: string
+  difficulty: number
   estimatedMinutes: number
-  domainId?: string
+  domain?: BackendDomain
   metadata?: Record<string, unknown>
-  active?: boolean
+  isActive?: boolean
   createdAt: string
   updatedAt: string
 }
 
-interface BackendPage<T> {
-  content: T[]
-  totalElements: number
-  totalPages: number
+interface BackendEvent {
+  id: string
+  userId: string
+  eventType: string
+  entityType?: string
+  entityId?: string
+  occurredAt: string
 }
 
-interface BackendTrackingEvent {
-  userId: string
-  contentItemId: string
-  eventType: string
-  timestamp?: string
+interface BackendEventPage {
+  content: BackendEvent[]
+  totalElements: number
+}
+
+type ContentStatusEntry = { status: Content['status']; progress: number }
+
+const statusFromEvents = (events: BackendEvent[]): ContentStatusEntry => {
+  const hasCompleted = events.some(e => e.eventType === 'CONTENT_COMPLETE')
+  const hasStarted = events.some(e => e.eventType === 'CONTENT_START')
+  if (hasCompleted) return { status: 'completed', progress: 100 }
+  if (hasStarted) return { status: 'in_progress', progress: 50 }
+  return { status: 'not_started', progress: 0 }
+}
+
+const fetchContentStatusMap = async (userId: string): Promise<Map<string, ContentStatusEntry>> => {
+  if (!userId) return new Map()
+  const response = await httpClient
+    .get<BackendEventPage>(`/tracking/events?userId=${userId}&entityType=content_item&page=0&size=200`)
+    .catch(() => ({ content: [] as BackendEvent[], totalElements: 0 }))
+
+  const events = response.content ?? []
+  const grouped = new Map<string, BackendEvent[]>()
+  for (const event of events) {
+    if (!event.entityId) continue
+    const list = grouped.get(event.entityId) ?? []
+    list.push(event)
+    grouped.set(event.entityId, list)
+  }
+
+  const result = new Map<string, ContentStatusEntry>()
+  for (const [entityId, evts] of grouped) {
+    result.set(entityId, statusFromEvents(evts))
+  }
+  return result
+}
+
+const postTrackingEvent = async (contentId: string, eventType: 'CONTENT_START' | 'CONTENT_COMPLETE') => {
+  const userId = localStorage.getItem('user_id') || ''
+  const now = new Date().toISOString()
+  const payloadObj = eventType === 'CONTENT_START'
+    ? { contentItemId: contentId, startTime: now }
+    : { contentItemId: contentId, completionTime: now, timeSpentMs: 0 }
+  await httpClient.post('/tracking/events', {
+    userId,
+    eventType,
+    entityType: 'content_item',
+    entityId: contentId,
+    occurredAt: now,
+    payload: JSON.stringify(payloadObj),
+  })
 }
 
 const mapContentType = (contentType: string): Content['type'] => {
@@ -84,61 +139,55 @@ const mapContentType = (contentType: string): Content['type'] => {
   return map[contentType?.toUpperCase()] || 'course'
 }
 
-const mapDifficulty = (difficulty: string): Content['level'] => {
-  const map: Record<string, Content['level']> = {
-    BEGINNER: 'beginner',
-    INTERMEDIATE: 'intermediate',
-    ADVANCED: 'advanced',
-  }
-  return map[difficulty?.toUpperCase()] || 'beginner'
+const mapDifficulty = (difficulty: number): Content['level'] => {
+  if (difficulty <= 0.33) return 'beginner'
+  if (difficulty <= 0.66) return 'intermediate'
+  return 'advanced'
 }
 
-const adaptContent = (item: BackendContentItem): Content => ({
-  id: item.id,
-  title: item.title,
-  description: item.description,
-  type: mapContentType(item.contentType),
-  category: item.domainId || 'General',
-  level: mapDifficulty(item.difficulty),
-  duration: item.estimatedMinutes || 0,
-  progress: 0,
-  status: 'not_started',
-  thumbnail: '',
-  tags: [],
-  createdAt: item.createdAt,
-  updatedAt: item.updatedAt,
-})
+const adaptContent = (item: BackendContentItem, statusEntry?: ContentStatusEntry): Content => {
+  const { status, progress } = statusEntry ?? { status: 'not_started' as const, progress: 0 }
+  return {
+    id: item.id,
+    title: item.title,
+    description: item.description,
+    type: mapContentType(item.type),
+    category: item.domain?.name || 'General',
+    level: mapDifficulty(item.difficulty ?? 0),
+    duration: item.estimatedMinutes || 0,
+    progress,
+    status,
+    thumbnail: (item.metadata?.thumbnail as string) || '',
+    tags: (item.metadata?.tags as string[]) || [],
+    createdAt: item.createdAt,
+    updatedAt: item.updatedAt,
+  }
+}
 
-// Real API implementation
 const getContentsAPI = async (): Promise<Content[]> => {
-  const page = await httpClient.get<BackendPage<BackendContentItem>>(
-    '/content/content-items?page=0&size=50'
-  )
-  return page.content.map(adaptContent)
+  const userId = localStorage.getItem('user_id') || ''
+  const [items, statusMap] = await Promise.all([
+    httpClient.get<BackendContentItem[]>('/content/content-items?page=0&size=50'),
+    fetchContentStatusMap(userId),
+  ])
+  return items.map(item => adaptContent(item, statusMap.get(item.id)))
 }
 
 const getContentAPI = async (id: string): Promise<Content | null> => {
-  const item = await httpClient
-    .get<BackendContentItem>(`/content/content-items/${id}`)
-    .catch(() => null)
-  return item ? adaptContent(item) : null
+  const userId = localStorage.getItem('user_id') || ''
+  const [item, statusMap] = await Promise.all([
+    httpClient.get<BackendContentItem>(`/content/content-items/${id}`).catch(() => null),
+    fetchContentStatusMap(userId),
+  ])
+  return item ? adaptContent(item, statusMap.get(id)) : null
 }
 
-const updateProgressAPI = async (id: string, progress: number): Promise<Content> => {
-  const userId = localStorage.getItem('user_id') || ''
-  const eventType = progress >= 100 ? 'CONTENT_COMPLETED' : 'CONTENT_STARTED'
-  const event: BackendTrackingEvent = {
-    userId,
-    contentItemId: id,
-    eventType,
-    timestamp: new Date().toISOString(),
-  }
-  await httpClient.post('/tracking/events', event)
-  const content = await getContentAPI(id)
-  if (!content) throw new Error('Content not found')
-  content.progress = progress
-  content.status = progress >= 100 ? 'completed' : progress > 0 ? 'in_progress' : 'not_started'
-  return content
+export const startContent = async (id: string): Promise<void> => {
+  await postTrackingEvent(id, 'CONTENT_START')
+}
+
+export const completeContent = async (id: string): Promise<void> => {
+  await postTrackingEvent(id, 'CONTENT_COMPLETE')
 }
 
 // Mock data
@@ -228,15 +277,8 @@ export const contentsService = {
     return contents.filter(c => c.type === 'lesson') as Lesson[]
   },
 
-  async updateProgress(id: string, progress: number): Promise<Content> {
-    if (USE_REAL_API) return updateProgressAPI(id, progress)
-    await new Promise(resolve => setTimeout(resolve, 600))
-    const content = mockContents.find(c => c.id === id)
-    if (!content) throw new Error('Content not found')
-    content.progress = progress
-    content.status = progress === 100 ? 'completed' : progress > 0 ? 'in_progress' : 'not_started'
-    content.updatedAt = new Date().toISOString().split('T')[0]
-    return { ...content }
+  async updateProgress(): Promise<void> {
+    // Progress is now managed via startContent / completeContent
   },
 
   async getContentsByCategory(category: string): Promise<Content[]> {

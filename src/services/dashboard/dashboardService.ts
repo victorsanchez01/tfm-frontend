@@ -74,7 +74,7 @@ const mapEventType = (eventType: string): ActivityItem['type'] => {
 const getDashboardStatsAPI = async (): Promise<DashboardStats> => {
   const userId = localStorage.getItem('user_id') || ''
 
-  const [stats, goalsPage, contentsPage] = await Promise.all([
+  const [stats, goals, contents] = await Promise.all([
     httpClient
       .get<BackendStats>(`/tracking/analytics/users/${userId}/stats`)
       .catch(() => ({ totalHours: 0, completedActivities: 0, currentStreak: 0 })),
@@ -82,20 +82,21 @@ const getDashboardStatsAPI = async (): Promise<DashboardStats> => {
       .get<BackendGoal[]>('/profiles/me/goals')
       .catch(() => [] as BackendGoal[]),
     httpClient
-      .get<BackendPage<unknown>>('/content/content-items?page=0&size=1')
-      .catch(() => ({ content: [], totalElements: 0, totalPages: 0 })),
+      .get<unknown[]>('/content/content-items?page=0&size=100')
+      .catch(() => [] as unknown[]),
   ])
 
-  const goals = Array.isArray(goalsPage) ? goalsPage : []
-  const activeGoals = goals.filter(g => g.status?.toUpperCase() === 'ACTIVE').length
-  const completedGoals = goals.filter(g => g.status?.toUpperCase() === 'COMPLETED').length
+  const goalsList = Array.isArray(goals) ? goals : []
+  const activeGoals = goalsList.filter(g => g.status?.toUpperCase() === 'ACTIVE').length
+  const completedGoals = goalsList.filter(g => g.status?.toUpperCase() === 'COMPLETED').length
+  const totalCourses = Array.isArray(contents) ? contents.length : 0
 
   return {
     completedLessons: stats.completedActivities,
-    totalLessons: contentsPage.totalElements || 0,
+    totalLessons: totalCourses,
     activeGoals,
     completedGoals,
-    totalCourses: contentsPage.totalElements || 0,
+    totalCourses,
   }
 }
 

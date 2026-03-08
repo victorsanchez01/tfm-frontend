@@ -6,6 +6,7 @@
 //  Copyright © 2026 Victor Sanchez. All rights reserved.
 //
 
+import React from 'react'
 import { type Content } from '../../../services/contents/contentsService'
 import styles from './ContentCard.module.css'
 
@@ -15,6 +16,49 @@ interface ContentCardProps {
 }
 
 export function ContentCard({ content, onClick }: ContentCardProps) {
+  const getPlaceholderStyle = (category: string): React.CSSProperties => {
+    const lower = category.toLowerCase()
+    if (lower.includes('backend') || lower.includes('java') || lower.includes('spring'))
+      return { background: 'linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%)' }
+    if (lower.includes('frontend') || lower.includes('react') || lower.includes('css'))
+      return { background: 'linear-gradient(135deg, #4c1d95 0%, #7c3aed 100%)' }
+    if (lower.includes('data') || lower.includes('python') || lower.includes('ml'))
+      return { background: 'linear-gradient(135deg, #064e3b 0%, #059669 100%)' }
+    if (lower.includes('devops') || lower.includes('cloud') || lower.includes('infra'))
+      return { background: 'linear-gradient(135deg, #7c2d12 0%, #ea580c 100%)' }
+    return { background: 'linear-gradient(135deg, #1e293b 0%, #475569 100%)' }
+  }
+
+  const getTypeIconLarge = (type: Content['type']) => {
+    switch (type) {
+      case 'video':
+        return (
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeOpacity="0.9">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        )
+      case 'quiz':
+        return (
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeOpacity="0.9">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        )
+      case 'article':
+        return (
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeOpacity="0.9">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+        )
+      default:
+        return (
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeOpacity="0.9">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+          </svg>
+        )
+    }
+  }
+
   const getTypeIcon = (type: Content['type']) => {
     switch (type) {
       case 'course':
@@ -121,7 +165,14 @@ export function ContentCard({ content, onClick }: ContentCardProps) {
   return (
     <div className={styles.card} onClick={onClick}>
       <div className={styles.thumbnail}>
-        <img src={content.thumbnail} alt={content.title} />
+        {content.thumbnail ? (
+          <img src={content.thumbnail} alt={content.title} />
+        ) : (
+          <div className={styles.placeholder} style={getPlaceholderStyle(content.category)}>
+            <div className={styles.placeholderIcon}>{getTypeIconLarge(content.type)}</div>
+            <span className={styles.placeholderCategory}>{content.category}</span>
+          </div>
+        )}
         <div className={styles.typeBadge}>
           {getTypeIcon(content.type)}
           <span>{getTypeLabel(content.type)}</span>
