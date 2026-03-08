@@ -58,16 +58,36 @@ interface BackendUpdateRequest {
   timezone?: string
 }
 
+const LOCAL_PROFILE_KEY = 'tfm_profile_extra'
+
+const loadLocalExtras = () => {
+  try {
+    return JSON.parse(localStorage.getItem(LOCAL_PROFILE_KEY) || '{}')
+  } catch {
+    return {}
+  }
+}
+
+const saveLocalExtras = (data: { bio?: string; location?: string; website?: string; avatar?: string }) => {
+  const existing = loadLocalExtras()
+  localStorage.setItem(LOCAL_PROFILE_KEY, JSON.stringify({ ...existing, ...data }))
+}
+
 const adaptProfile = (backend: BackendProfile, stats: BackendStats): UserProfile => {
   const parts = backend.displayName.split(' ')
   const firstName = parts[0] || ''
   const lastName = parts.slice(1).join(' ') || ''
+  const extras = loadLocalExtras()
 
   return {
     id: backend.userId,
     firstName,
     lastName,
     email: backend.email,
+    bio: extras.bio || '',
+    location: extras.location || '',
+    website: extras.website || '',
+    avatar: extras.avatar,
     joinedAt: backend.createdAt.split('T')[0],
     stats: {
       completedCourses: stats.completedActivities,
@@ -98,6 +118,8 @@ const updateProfileAPI = async (data: UpdateProfileData): Promise<UserProfile> =
   const displayName = `${data.firstName} ${data.lastName}`.trim()
   const updateRequest: BackendUpdateRequest = { displayName }
   await httpClient.put<BackendProfile>('/profiles/me', updateRequest)
+  localStorage.setItem('display_name', displayName)
+  saveLocalExtras({ bio: data.bio, location: data.location, website: data.website })
   return getProfileAPI()
 }
 
@@ -133,8 +155,16 @@ export const profileService = {
     return { ...mockProfileData }
   },
 
-  async uploadAvatar(): Promise<string> {
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    return `https://api.dicebear.com/7.x/avataaars/svg?seed=${Date.now()}`
+  async uploadAvatar(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const dataUrl = e.target?.result as string
+        saveLocalExtras({ avatar: dataUrl })
+        resolve(dataUrl)
+      }
+      reader.onerror = reject
+      reader.readAsDataURL(file)
+    })
   },
 }

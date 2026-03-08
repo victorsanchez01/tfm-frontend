@@ -17,9 +17,19 @@ import { NotificationButton } from './components/NotificationButton'
 import { StatsOverview, StudyTimeChart, ProgressChart, WeeklyActivityChart } from './charts'
 import styles from './DashboardPage.module.css'
 
+const getProfileExtras = () => {
+  try {
+    return JSON.parse(localStorage.getItem('tfm_profile_extra') || '{}')
+  } catch {
+    return {}
+  }
+}
+
 export function DashboardPage() {
   const navigate = useNavigate()
   const token = getStoredAccessToken()
+  const displayName = localStorage.getItem('display_name') || ''
+  const avatar = getProfileExtras().avatar as string | undefined
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [statsOverview, setStatsOverview] = useState<StatsOverviewType | null>(null)
   const [studyTime, setStudyTime] = useState<StudyTimeData[]>([])
@@ -106,13 +116,17 @@ export function DashboardPage() {
         <div className={styles.headerTop}>
           <div className={styles.userInfo}>
             <div className={styles.avatar}>
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
+              {avatar ? (
+                <img src={avatar} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+              ) : (
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              )}
             </div>
             <div className={styles.userDetails}>
-              <h2 className={styles.userName}>Bienvenido de nuevo</h2>
-              <p className={styles.userEmail}>usuario@ejemplo.com</p>
+              <h2 className={styles.userName}>Bienvenido de nuevo{displayName ? `, ${displayName}` : ''}</h2>
+              <p className={styles.userEmail}>{localStorage.getItem('email') || ''}</p>
             </div>
           </div>
           

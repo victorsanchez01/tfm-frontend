@@ -9,41 +9,12 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@shared/ui'
-import { getStoredAccessToken, getProfile } from '../../services/auth/authService'
-import { type UserProfile } from '../../services/profile/profileService'
+import { getStoredAccessToken } from '../../services/auth/authService'
+import { profileService, type UserProfile } from '../../services/profile/profileService'
 import { ProfileCard, StatsCard } from './components'
 import styles from './ProfilePage.module.css'
 
-// Backend profile type from auth mock
-interface BackendUserProfile {
-  user_id: string
-  auth_user_id: string
-  email: string
-  display_name: string
-  created_at: string
-  updated_at: string
-}
-
-// Convert backend profile to frontend format
-const adaptProfileData = (backendProfile: BackendUserProfile): UserProfile => {
-  const nameParts = backendProfile.display_name.split(' ')
-  return {
-    id: backendProfile.user_id,
-    firstName: nameParts[0] || '',
-    lastName: nameParts[1] || '',
-    email: backendProfile.email,
-    bio: '',
-    location: '',
-    website: '',
-    joinedAt: new Date(backendProfile.created_at).toLocaleDateString(),
-    stats: {
-      completedCourses: 0,
-      totalHours: 0,
-      streak: 0,
-      certificates: 0,
-    },
-  }
-}
+type Toast = { message: string; type: 'success' | 'error' }
 
 export function ProfilePage() {
   const navigate = useNavigate()
@@ -52,6 +23,7 @@ export function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [toast, setToast] = useState<Toast | null>(null)
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -59,6 +31,11 @@ export function ProfilePage() {
     location: '',
     website: '',
   })
+
+  const showToast = (message: string, type: Toast['type']) => {
+    setToast({ message, type })
+    setTimeout(() => setToast(null), 3500)
+  }
 
   useEffect(() => {
     if (!token) {
@@ -72,51 +49,17 @@ export function ProfilePage() {
   const loadProfile = async () => {
     try {
       setLoading(true)
-      // Try to get profile from backend
-      const backendProfile = await getProfile()
-      const adaptedProfile = adaptProfileData(backendProfile)
-      setProfile(adaptedProfile)
+      const loaded = await profileService.getProfile()
+      setProfile(loaded)
       setFormData({
-        firstName: adaptedProfile.firstName,
-        lastName: adaptedProfile.lastName,
-        bio: adaptedProfile.bio || '',
-        location: adaptedProfile.location || '',
-        website: adaptedProfile.website || '',
+        firstName: loaded.firstName,
+        lastName: loaded.lastName,
+        bio: loaded.bio || '',
+        location: loaded.location || '',
+        website: loaded.website || '',
       })
     } catch {
-      // Silently handle CORS/auth errors - we'll use fallback
       console.log('Profile endpoint not available, using fallback data')
-      // Fallback: use data from registration
-      const userId = localStorage.getItem('user_id')
-      const displayName = localStorage.getItem('display_name') || 'User'
-      const email = localStorage.getItem('email') || 'user@example.com'
-      const createdAt = localStorage.getItem('created_at') || new Date().toISOString()
-      
-      const fallbackProfile: UserProfile = {
-        id: userId || 'unknown',
-        firstName: displayName.split(' ')[0] || '',
-        lastName: displayName.split(' ')[1] || '',
-        email,
-        bio: '',
-        location: '',
-        website: '',
-        joinedAt: new Date(createdAt).toLocaleDateString(),
-        stats: {
-          completedCourses: 0,
-          totalHours: 0,
-          streak: 0,
-          certificates: 0,
-        },
-      }
-      
-      setProfile(fallbackProfile)
-      setFormData({
-        firstName: fallbackProfile.firstName,
-        lastName: fallbackProfile.lastName,
-        bio: '',
-        location: '',
-        website: '',
-      })
     } finally {
       setLoading(false)
     }
@@ -144,12 +87,13 @@ export function ProfilePage() {
 
     try {
       setSaving(true)
-      // TODO: Implement update profile in backend
-      // For now, just update local state
-      setProfile(prev => prev ? { ...prev, ...formData } : null)
+      const updated = await profileService.updateProfile(formData)
+      setProfile(updated)
       setIsEditing(false)
+      showToast('Perfil guardado correctamente', 'success')
     } catch (error) {
       console.error('Error saving profile:', error)
+      showToast('Error al guardar el perfil. Inténtalo de nuevo.', 'error')
     } finally {
       setSaving(false)
     }
@@ -159,16 +103,16 @@ export function ProfilePage() {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
-  const handleAvatarUpload = async () => {
+  const handleAvatarUpload = async (file: File) => {
     if (!profile) return
 
     try {
-      // TODO: Implement avatar upload in backend
-      // For now, just generate a random avatar URL
-      const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${Date.now()}`
+      const avatarUrl = await profileService.uploadAvatar(file)
       setProfile(prev => prev ? { ...prev, avatar: avatarUrl } : null)
+      showToast('Foto de perfil actualizada', 'success')
     } catch (error) {
       console.error('Error uploading avatar:', error)
+      showToast('Error al subir la foto. Inténtalo de nuevo.', 'error')
     }
   }
 
@@ -245,6 +189,21 @@ export function ProfilePage() {
           </div>
         </div>
       </main>
+
+      {toast && (
+        <div className={`${styles.toast} ${toast.type === 'success' ? styles.toastSuccess : styles.toastError}`}>
+          {toast.type === 'success' ? (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          ) : (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          )}
+          {toast.message}
+        </div>
+      )}
     </div>
   )
 }

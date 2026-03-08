@@ -22,7 +22,7 @@ interface ProfileCardProps {
     website: string
   }
   onInputChange: (field: string, value: string) => void
-  onAvatarUpload: () => void
+  onAvatarUpload: (file: File) => void
 }
 
 export function ProfileCard({
@@ -33,9 +33,9 @@ export function ProfileCard({
   onAvatarUpload,
 }: ProfileCardProps) {
   const handleAvatarChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const _file = e.target.files?.[0]
-    if (_file) {
-      onAvatarUpload()
+    const file = e.target.files?.[0]
+    if (file) {
+      onAvatarUpload(file)
     }
   }
 
