@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Button } from '@shared/ui'
 import { getStoredAccessToken } from '../../services/auth/authService'
-import { contentsService, startContent, completeContent, type Content, type Course } from '../../services/contents/contentsService'
+import { contentsService, startContent, completeContent, resetContent, type Content, type Course } from '../../services/contents/contentsService'
 import { ContentHeader, ContentTabs, LessonList, ResourceList, VideoPlayer, QuizPlayer, BookmarkButton } from './detail'
 import styles from './ContentDetailPage.module.css'
 
@@ -57,8 +57,18 @@ export function ContentDetailPage() {
 
   const handleStartContent = async () => {
     if (!content || content.status !== 'not_started') return
-    setContent(prev => prev ? { ...prev, status: 'in_progress', progress: 50 } : null)
+    setContent(prev => prev ? { ...prev, status: 'in_progress', progress: 0 } : null)
     startContent(content.id).catch(console.error)
+  }
+
+  const handleResetContent = async () => {
+    if (!content) return
+    const confirmed = window.confirm(
+      '¿Estás seguro de que quieres reiniciar este contenido?\n\nSe perderá todo el progreso registrado y comenzará desde cero.'
+    )
+    if (!confirmed) return
+    setContent(prev => prev ? { ...prev, status: 'not_started', progress: 0 } : null)
+    resetContent(content.id).catch(console.error)
   }
 
   const handleCompleteContent = async () => {
@@ -74,12 +84,10 @@ export function ContentDetailPage() {
 
   const handleVideoProgress = (progress: number) => {
     console.log('Video progress:', progress)
-    // TODO: Update progress tracking
   }
 
   const handleVideoComplete = () => {
     console.log('Video completed')
-    // TODO: Mark as completed
   }
 
   const handleQuizComplete = (result: {
@@ -146,7 +154,7 @@ export function ContentDetailPage() {
               </Button>
             )}
             {content.status === 'completed' && (
-              <Button variant="secondary" className={styles.startButton} onClick={handleStartContent}>
+              <Button variant="secondary" className={styles.startButton} onClick={handleResetContent}>
                 Ver de nuevo
               </Button>
             )}

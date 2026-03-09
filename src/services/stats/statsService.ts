@@ -54,21 +54,105 @@ interface BackendDailyActivity {
   activitiesCount: number
 }
 
+interface BackendEvent {
+  id: string
+  eventType: string
+  entityId: string
+  occurredAt: string
+}
+
+interface BackendEventPage {
+  content: BackendEvent[]
+}
+
+interface BackendContentItem {
+  id: string
+  title: string
+}
+
+export interface CompletedContentItem {
+  id: string
+  title: string
+}
+
+const fetchContentStatusCounts = async (userId: string) => {
+  const page = await httpClient
+    .get<BackendEventPage>(`/tracking/events?userId=${userId}&entityType=content_item&page=0&size=200`)
+    .catch(() => ({ content: [] as BackendEvent[] }))
+
+  const events = page.content ?? []
+  const latestByEntity = new Map<string, BackendEvent>()
+  for (const e of events) {
+    if (!e.entityId) continue
+    const existing = latestByEntity.get(e.entityId)
+    if (!existing || new Date(e.occurredAt) > new Date(existing.occurredAt)) {
+      latestByEntity.set(e.entityId, e)
+    }
+  }
+
+  let inProgress = 0
+  let completed = 0
+  const completedIds: string[] = []
+  for (const [id, event] of latestByEntity) {
+    if (event.eventType === 'CONTENT_COMPLETE') {
+      completed++
+      completedIds.push(id)
+    } else if (event.eventType === 'CONTENT_START') {
+      inProgress++
+    }
+  }
+  return { inProgress, completed, completedIds }
+}
+
+interface BackendPreferences {
+  hoursPerWeek?: number
+}
+
 // Real API implementation
 const getOverviewAPI = async (): Promise<StatsOverview> => {
   const userId = localStorage.getItem('user_id') || ''
-  const stats = await httpClient
-    .get<BackendStats>(`/tracking/analytics/users/${userId}/stats`)
-    .catch(() => ({ totalHours: 0, completedActivities: 0, currentStreak: 0 }))
+  const to = new Date().toISOString().split('T')[0]
+  const from = new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0]
+
+  const [stats, counts, weeklyActivity, prefs] = await Promise.all([
+    httpClient
+      .get<BackendStats>(`/tracking/analytics/users/${userId}/stats`)
+      .catch(() => ({ totalHours: 0, completedActivities: 0, currentStreak: 0 })),
+    fetchContentStatusCounts(userId),
+    httpClient
+      .get<BackendDailyActivity[]>(`/tracking/analytics/users/${userId}/activity?from=${from}&to=${to}`)
+      .catch(() => [] as BackendDailyActivity[]),
+    httpClient
+      .get<BackendPreferences>('/profiles/me/preferences')
+      .catch(() => ({ hoursPerWeek: 10 })),
+  ])
+
+  const weeklyMinutes = (Array.isArray(weeklyActivity) ? weeklyActivity : [])
+    .reduce((sum, day) => sum + (day.minutesStudied || 0), 0)
+  const weeklyGoalMinutes = (prefs?.hoursPerWeek ?? 10) * 60
 
   return {
     totalStudyTime: Math.round(stats.totalHours * 60),
     streakDays: stats.currentStreak,
-    completedCourses: stats.completedActivities,
-    inProgressCourses: 0,
-    weeklyGoal: 600,
-    weeklyProgress: 0,
+    completedCourses: counts.completed,
+    inProgressCourses: counts.inProgress,
+    weeklyGoal: weeklyGoalMinutes,
+    weeklyProgress: weeklyMinutes,
   }
+}
+
+const getCompletedContentsListAPI = async (): Promise<CompletedContentItem[]> => {
+  const userId = localStorage.getItem('user_id') || ''
+  const { completedIds } = await fetchContentStatusCounts(userId)
+  if (completedIds.length === 0) return []
+
+  const items = await httpClient
+    .get<BackendContentItem[]>('/content/content-items?page=0&size=100')
+    .catch(() => [] as BackendContentItem[])
+
+  return (Array.isArray(items) ? items : [])
+    .filter(item => completedIds.includes(item.id))
+    .map(item => ({ id: item.id, title: item.title }))
 }
 
 const getStudyTimeAPI = async (days: number = 30): Promise<StudyTimeData[]> => {
@@ -145,6 +229,14 @@ const generateMockMonthlyProgress = (): MonthlyProgressData[] => {
 }
 
 export const statsService = {
+  async getCompletedContentsList(): Promise<CompletedContentItem[]> {
+    if (USE_REAL_API) return getCompletedContentsListAPI()
+    return [
+      { id: '1', title: 'React Hooks Fundamentals' },
+      { id: '3', title: 'CSS Grid Layout' },
+    ]
+  },
+
   async getOverview(): Promise<StatsOverview> {
     if (USE_REAL_API) return getOverviewAPI()
     await new Promise(resolve => setTimeout(resolve, 300))

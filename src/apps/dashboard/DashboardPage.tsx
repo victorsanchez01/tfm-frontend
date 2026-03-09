@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getStoredAccessToken, clearTokens } from '../../services/auth/authService'
 import { dashboardService, type DashboardStats, type ActivityItem } from '../../services/dashboard/dashboardService'
-import { statsService, type StatsOverview as StatsOverviewType, type StudyTimeData, type ProgressData, type ActivityData } from '../../services/stats'
+import { statsService, type StatsOverview as StatsOverviewType, type StudyTimeData, type ProgressData, type ActivityData, type CompletedContentItem } from '../../services/stats'
 import { DashboardCard } from './components/DashboardCard'
 import { ActivityList } from './components/ActivityList'
 import { NotificationButton } from './components/NotificationButton'
@@ -36,6 +36,7 @@ export function DashboardPage() {
   const [progress, setProgress] = useState<ProgressData[]>([])
   const [weeklyActivity, setWeeklyActivity] = useState<ActivityData[]>([])
   const [activities, setActivities] = useState<ActivityItem[]>([])
+  const [completedContents, setCompletedContents] = useState<CompletedContentItem[]>([])
   const [showMenu, setShowMenu] = useState(false)
 
   useEffect(() => {
@@ -47,21 +48,23 @@ export function DashboardPage() {
   useEffect(() => {
     const loadDashboardData = async () => {
       try {
-        const [statsData, activitiesData, overviewData, studyTimeData, progressData, activityData] = await Promise.all([
+        const [statsData, activitiesData, overviewData, studyTimeData, progressData, activityData, completedList] = await Promise.all([
           dashboardService.getDashboardStats(),
           dashboardService.getRecentActivities(),
           statsService.getOverview(),
           statsService.getStudyTime(30),
           statsService.getProgressByCategory(),
           statsService.getWeeklyActivity(),
+          statsService.getCompletedContentsList(),
         ])
-        
+
         setStats(statsData)
         setActivities(activitiesData)
         setStatsOverview(overviewData)
         setStudyTime(studyTimeData)
         setProgress(progressData)
         setWeeklyActivity(activityData)
+        setCompletedContents(completedList)
       } catch (error) {
         console.error('Error loading dashboard data:', error)
       }
@@ -249,6 +252,22 @@ export function DashboardPage() {
             onButtonClick={() => navigate('/certificates')}
           />
         </div>
+
+        {completedContents.length > 0 && (
+          <div className={styles.completedSection}>
+            <h3 className={styles.completedTitle}>Contenidos completados</h3>
+            <ul className={styles.completedList}>
+              {completedContents.map(item => (
+                <li key={item.id} className={styles.completedItem} onClick={() => navigate(`/contents/${item.id}`)}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                  </svg>
+                  {item.title}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         <div className={styles.chartsGrid}>
           <StudyTimeChart data={studyTime} />

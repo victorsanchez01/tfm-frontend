@@ -28,13 +28,41 @@
 .icon {
   width: 3rem;
   height: 3rem;
-  background-color: #f3f4f6;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #6b7280;
   flex-shrink: 0;
+}
+
+/* Tiempo total — azul */
+.iconBlue {
+  background-color: #dbeafe;
+  color: #2563eb;
+}
+
+/* Racha actual — naranja */
+.iconOrange {
+  background-color: #ffedd5;
+  color: #ea580c;
+}
+
+/* Cursos completados — verde */
+.iconGreen {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
+/* En progreso — violeta */
+.iconViolet {
+  background-color: #ede9fe;
+  color: #7c3aed;
+}
+
+/* Meta semanal — teal */
+.iconTeal {
+  background-color: #ccfbf1;
+  color: #0d9488;
 }
 
 .content {

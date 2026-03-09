@@ -83,10 +83,13 @@ interface BackendEventPage {
 type ContentStatusEntry = { status: Content['status']; progress: number }
 
 const statusFromEvents = (events: BackendEvent[]): ContentStatusEntry => {
-  const hasCompleted = events.some(e => e.eventType === 'CONTENT_COMPLETE')
-  const hasStarted = events.some(e => e.eventType === 'CONTENT_START')
-  if (hasCompleted) return { status: 'completed', progress: 100 }
-  if (hasStarted) return { status: 'in_progress', progress: 50 }
+  if (events.length === 0) return { status: 'not_started', progress: 0 }
+  const sorted = [...events].sort(
+    (a, b) => new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime()
+  )
+  const latest = sorted[0]
+  if (latest.eventType === 'CONTENT_COMPLETE') return { status: 'completed', progress: 100 }
+  if (latest.eventType === 'CONTENT_START') return { status: 'in_progress', progress: 0 }
   return { status: 'not_started', progress: 0 }
 }
 
@@ -112,12 +115,17 @@ const fetchContentStatusMap = async (userId: string): Promise<Map<string, Conten
   return result
 }
 
-const postTrackingEvent = async (contentId: string, eventType: 'CONTENT_START' | 'CONTENT_COMPLETE') => {
+const postTrackingEvent = async (contentId: string, eventType: 'CONTENT_START' | 'CONTENT_COMPLETE' | 'CONTENT_RESET') => {
   const userId = localStorage.getItem('user_id') || ''
   const now = new Date().toISOString()
-  const payloadObj = eventType === 'CONTENT_START'
-    ? { contentItemId: contentId, startTime: now }
-    : { contentItemId: contentId, completionTime: now, timeSpentMs: 0 }
+  let payloadObj: Record<string, unknown>
+  if (eventType === 'CONTENT_START') {
+    payloadObj = { contentItemId: contentId, startTime: now }
+  } else if (eventType === 'CONTENT_COMPLETE') {
+    payloadObj = { contentItemId: contentId, completionTime: now, timeSpentMs: 0 }
+  } else {
+    payloadObj = { contentItemId: contentId, resetTime: now }
+  }
   await httpClient.post('/tracking/events', {
     userId,
     eventType,
@@ -188,6 +196,10 @@ export const startContent = async (id: string): Promise<void> => {
 
 export const completeContent = async (id: string): Promise<void> => {
   await postTrackingEvent(id, 'CONTENT_COMPLETE')
+}
+
+export const resetContent = async (id: string): Promise<void> => {
+  await postTrackingEvent(id, 'CONTENT_RESET')
 }
 
 // Mock data
