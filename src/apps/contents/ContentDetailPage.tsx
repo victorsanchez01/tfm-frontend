@@ -281,7 +281,7 @@ export function ContentDetailPage() {
             <div className={styles.tabContent}>
               <LessonList
                 lessons={course.lessons}
-                onLessonComplete={handleCompleteLesson}
+                onLessonComplete={handleCompleteContent}
               />
             </div>
           )}
