@@ -41,12 +41,12 @@ export function BookmarkButton({ isBookmarked, onToggle, showLink = false }: Boo
         >
           <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2v16z" />
         </svg>
-        <span>{isBookmarked ? 'Guardado' : 'Guardar'}</span>
+        <span>{isBookmarked ? 'En favoritos' : 'Guardar en favoritos'}</span>
       </button>
-      
+
       {showLink && isBookmarked && (
         <a href="/favorites" className={styles.link}>
-          Ver todos los guardados
+          Ver todos mis favoritos
         </a>
       )}
     </div>

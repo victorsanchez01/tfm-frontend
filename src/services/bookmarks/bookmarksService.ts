@@ -6,6 +6,7 @@
 //  Copyright © 2026 Victor Sanchez. All rights reserved.
 //
 
+import { httpClient, USE_REAL_API } from '../api/httpClient'
 import { type Content } from '../contents/contentsService'
 
 export interface Bookmark {
@@ -16,86 +17,148 @@ export interface Bookmark {
   content: Content
 }
 
-const mockBookmarks: Bookmark[] = [
-  {
-    id: '1',
-    contentId: '1',
-    userId: 'user-1',
-    createdAt: '2024-01-10T10:00:00Z',
-    content: {
-      id: '1',
-      title: 'React Hooks Fundamentals',
-      description: 'Aprende los fundamentos de React Hooks incluyendo useState, useEffect y custom hooks',
-      type: 'course',
-      category: 'Frontend',
-      level: 'intermediate',
-      duration: 240,
-      progress: 65,
-      status: 'in_progress',
-      thumbnail: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=400',
-      tags: ['react', 'hooks', 'javascript'],
-      createdAt: '2024-01-01',
-      updatedAt: '2024-01-15',
-    },
-  },
-  {
-    id: '2',
-    contentId: '3',
-    userId: 'user-1',
-    createdAt: '2024-01-12T14:30:00Z',
-    content: {
-      id: '3',
-      title: 'CSS Grid Layout',
-      description: 'Aprende a crear layouts complejos y responsivos con CSS Grid',
-      type: 'lesson',
-      category: 'CSS',
-      level: 'beginner',
-      duration: 45,
-      progress: 100,
-      status: 'completed',
-      thumbnail: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
-      tags: ['css', 'grid', 'layout'],
-      createdAt: '2023-12-15',
-      updatedAt: '2023-12-20',
-    },
-  },
-]
+// Backend DTOs
+interface BackendEvent {
+  id: string
+  eventType: string
+  entityId: string
+  occurredAt: string
+}
 
-export const bookmarksService = {
-  async getBookmarks(userId: string): Promise<Bookmark[]> {
-    await new Promise(resolve => setTimeout(resolve, 300))
-    return mockBookmarks.filter(b => b.userId === userId)
-  },
+interface BackendEventPage {
+  content: BackendEvent[]
+}
 
-  async addBookmark(userId: string, contentId: string, content: Content): Promise<Bookmark> {
-    await new Promise(resolve => setTimeout(resolve, 200))
-    
-    const newBookmark: Bookmark = {
-      id: Date.now().toString(),
-      contentId,
+interface BackendContentItem {
+  id: string
+  title: string
+  description: string
+  type: string
+  difficulty: number
+  estimatedMinutes: number
+  domain?: { name: string }
+  metadata?: { thumbnail?: string; tags?: string[] }
+  createdAt: string
+  updatedAt: string
+}
+
+const mapLevel = (d: number): Content['level'] =>
+  d <= 0.33 ? 'beginner' : d <= 0.66 ? 'intermediate' : 'advanced'
+
+const mapType = (t: string): Content['type'] => {
+  const map: Record<string, Content['type']> = {
+    COURSE: 'course', VIDEO: 'video', ARTICLE: 'article', QUIZ: 'quiz', LESSON: 'lesson',
+  }
+  return map[t?.toUpperCase()] || 'course'
+}
+
+const adaptItem = (item: BackendContentItem): Content => ({
+  id: item.id,
+  title: item.title,
+  description: item.description,
+  type: mapType(item.type),
+  category: item.domain?.name || 'General',
+  level: mapLevel(item.difficulty ?? 0),
+  duration: item.estimatedMinutes || 0,
+  progress: 0,
+  status: 'not_started',
+  thumbnail: (item.metadata?.thumbnail as string) || '',
+  tags: (item.metadata?.tags as string[]) || [],
+  createdAt: item.createdAt,
+  updatedAt: item.updatedAt,
+})
+
+/** Fetches all bookmark events for the user and returns the set of currently-bookmarked contentIds.
+ *  A content is bookmarked if the latest event for that entityId is CONTENT_BOOKMARK. */
+const fetchBookmarkedIds = async (userId: string): Promise<Set<string>> => {
+  const page = await httpClient
+    .get<BackendEventPage>(
+      `/tracking/events?userId=${userId}&entityType=content_item&page=0&size=500`
+    )
+    .catch(() => ({ content: [] as BackendEvent[] }))
+
+  const events = page.content ?? []
+  const latestByEntity = new Map<string, BackendEvent>()
+  for (const e of events) {
+    if (!e.entityId) continue
+    if (e.eventType !== 'CONTENT_BOOKMARK' && e.eventType !== 'CONTENT_UNBOOKMARK') continue
+    const existing = latestByEntity.get(e.entityId)
+    if (!existing || new Date(e.occurredAt) > new Date(existing.occurredAt)) {
+      latestByEntity.set(e.entityId, e)
+    }
+  }
+
+  const bookmarked = new Set<string>()
+  for (const [id, event] of latestByEntity) {
+    if (event.eventType === 'CONTENT_BOOKMARK') bookmarked.add(id)
+  }
+  return bookmarked
+}
+
+const postBookmarkEvent = async (contentId: string, eventType: 'CONTENT_BOOKMARK' | 'CONTENT_UNBOOKMARK') => {
+  const userId = localStorage.getItem('user_id') || ''
+  const now = new Date().toISOString()
+  await httpClient.post('/tracking/events', {
+    userId,
+    eventType,
+    entityType: 'content_item',
+    entityId: contentId,
+    occurredAt: now,
+    payload: JSON.stringify({ contentItemId: contentId, timestamp: now }),
+  })
+}
+
+// Real API implementation
+const getBookmarksAPI = async (): Promise<Bookmark[]> => {
+  const userId = localStorage.getItem('user_id') || ''
+  const [bookmarkedIds, allItems] = await Promise.all([
+    fetchBookmarkedIds(userId),
+    httpClient
+      .get<BackendContentItem[]>('/content/content-items?page=0&size=100')
+      .catch(() => [] as BackendContentItem[]),
+  ])
+
+  if (bookmarkedIds.size === 0) return []
+
+  return (Array.isArray(allItems) ? allItems : [])
+    .filter(item => bookmarkedIds.has(item.id))
+    .map((item) => ({
+      id: `bm-${item.id}`,
+      contentId: item.id,
       userId,
       createdAt: new Date().toISOString(),
-      content,
-    }
-    
-    mockBookmarks.push(newBookmark)
-    return newBookmark
+      content: adaptItem(item),
+    }))
+}
+
+const isBookmarkedAPI = async (contentId: string): Promise<boolean> => {
+  const userId = localStorage.getItem('user_id') || ''
+  const bookmarkedIds = await fetchBookmarkedIds(userId)
+  return bookmarkedIds.has(contentId)
+}
+
+export const bookmarksService = {
+  async getBookmarks(): Promise<Bookmark[]> {
+    if (USE_REAL_API) return getBookmarksAPI()
+    return []
   },
 
-  async removeBookmark(userId: string, contentId: string): Promise<void> {
-    await new Promise(resolve => setTimeout(resolve, 200))
-    
-    const index = mockBookmarks.findIndex(
-      b => b.userId === userId && b.contentId === contentId
-    )
-    
-    if (index > -1) {
-      mockBookmarks.splice(index, 1)
+  async addBookmark(contentId: string): Promise<void> {
+    if (USE_REAL_API) {
+      await postBookmarkEvent(contentId, 'CONTENT_BOOKMARK')
+      return
     }
   },
 
-  async isBookmarked(userId: string, contentId: string): Promise<boolean> {
-    await new Promise(resolve => setTimeout(resolve, 100))
-    return mockBookmarks.some(b => b.userId === userId && b.contentId === contentId)
+  async removeBookmark(contentId: string): Promise<void> {
+    if (USE_REAL_API) {
+      await postBookmarkEvent(contentId, 'CONTENT_UNBOOKMARK')
+      return
+    }
+  },
+
+  async isBookmarked(contentId: string): Promise<boolean> {
+    if (USE_REAL_API) return isBookmarkedAPI(contentId)
+    return false
   },
 }

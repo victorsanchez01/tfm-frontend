@@ -31,8 +31,7 @@ export function FavoritesPage() {
 
   const loadBookmarks = async () => {
     try {
-      const userId = 'user-1' // TODO: Get from auth service
-      const data = await bookmarksService.getBookmarks(userId)
+      const data = await bookmarksService.getBookmarks()
       setBookmarks(data)
     } catch (error) {
       console.error('Error loading bookmarks:', error)
@@ -47,9 +46,8 @@ export function FavoritesPage() {
 
   const handleRemoveBookmark = async (contentId: string) => {
     try {
-      const userId = 'user-1' // TODO: Get from auth service
-      await bookmarksService.removeBookmark(userId, contentId)
-      setBookmarks(bookmarks.filter(b => b.contentId !== contentId))
+      await bookmarksService.removeBookmark(contentId)
+      setBookmarks(prev => prev.filter(b => b.contentId !== contentId))
     } catch (error) {
       console.error('Error removing bookmark:', error)
     }
@@ -150,11 +148,12 @@ export function FavoritesPage() {
                 <button
                   onClick={() => handleRemoveBookmark(bookmark.contentId)}
                   className={styles.removeButton}
-                  title="Quitar de favoritos"
+                  title="Eliminar de favoritos"
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2v16z" />
                   </svg>
+                  Eliminar de favoritos
                 </button>
               </div>
             ))}

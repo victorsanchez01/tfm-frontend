@@ -11,6 +11,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Button } from '@shared/ui'
 import { getStoredAccessToken } from '../../services/auth/authService'
 import { contentsService, startContent, completeContent, resetContent, type Content, type Course } from '../../services/contents/contentsService'
+import { bookmarksService } from '../../services/bookmarks/bookmarksService'
 import { ContentHeader, ContentTabs, LessonList, ResourceList, VideoPlayer, QuizPlayer, BookmarkButton } from './detail'
 import styles from './ContentDetailPage.module.css'
 
@@ -37,7 +38,14 @@ export function ContentDetailPage() {
     }
 
     loadContent()
+    loadBookmarkState()
   }, [token, id, navigate])
+
+  const loadBookmarkState = async () => {
+    if (!id) return
+    const bookmarked = await bookmarksService.isBookmarked(id).catch(() => false)
+    setIsBookmarked(bookmarked)
+  }
 
   const loadContent = async () => {
     try {
@@ -78,8 +86,14 @@ export function ContentDetailPage() {
   }
 
   const handleBookmarkToggle = () => {
-    setIsBookmarked(!isBookmarked)
-    // TODO: Save bookmark to backend
+    const next = !isBookmarked
+    setIsBookmarked(next)
+    if (content) {
+      const action = next
+        ? bookmarksService.addBookmark(content.id)
+        : bookmarksService.removeBookmark(content.id)
+      action.catch(() => setIsBookmarked(!next)) // revert on error
+    }
   }
 
   const handleVideoProgress = (progress: number) => {
