@@ -41,17 +41,19 @@ export interface StatsOverview {
   weeklyProgress: number
 }
 
-// Backend DTOs
+// Backend DTOs — campos reales de UserStatsResponse y DailyActivityResponse Java
 interface BackendStats {
   totalHours: number
-  completedActivities: number
+  lessonsCompleted: number   // ⚠️ NO es 'completedActivities'
+  assessmentsTaken: number
   currentStreak: number
+  totalEvents: number
 }
 
 interface BackendDailyActivity {
   date: string
-  minutesStudied: number
-  activitiesCount: number
+  hoursStudied: number       // ⚠️ NO es 'minutesStudied' — viene en horas
+  eventCount: number         // ⚠️ NO es 'activitiesCount'
 }
 
 interface BackendEvent {
@@ -117,7 +119,7 @@ const getOverviewAPI = async (): Promise<StatsOverview> => {
   const [stats, counts, weeklyActivity, prefs] = await Promise.all([
     httpClient
       .get<BackendStats>(`/tracking/analytics/users/${userId}/stats`)
-      .catch(() => ({ totalHours: 0, completedActivities: 0, currentStreak: 0 })),
+      .catch(() => ({ totalHours: 0, lessonsCompleted: 0, assessmentsTaken: 0, currentStreak: 0, totalEvents: 0 })),
     fetchContentStatusCounts(userId),
     httpClient
       .get<BackendDailyActivity[]>(`/tracking/analytics/users/${userId}/activity?from=${from}&to=${to}`)
@@ -127,8 +129,9 @@ const getOverviewAPI = async (): Promise<StatsOverview> => {
       .catch(() => ({ hoursPerWeek: 10 })),
   ])
 
+  // hoursStudied viene en horas → convertir a minutos
   const weeklyMinutes = (Array.isArray(weeklyActivity) ? weeklyActivity : [])
-    .reduce((sum, day) => sum + (day.minutesStudied || 0), 0)
+    .reduce((sum, day) => sum + Math.round((day.hoursStudied || 0) * 60), 0)
   const weeklyGoalMinutes = (prefs?.hoursPerWeek ?? 10) * 60
 
   return {
@@ -168,7 +171,7 @@ const getStudyTimeAPI = async (days: number = 30): Promise<StudyTimeData[]> => {
 
   return (Array.isArray(activities) ? activities : []).map(a => ({
     date: a.date,
-    minutes: a.minutesStudied || 0,
+    minutes: Math.round((a.hoursStudied || 0) * 60),
   }))
 }
 
@@ -185,7 +188,7 @@ const getWeeklyActivityAPI = async (): Promise<ActivityData[]> => {
 
   return (Array.isArray(activities) ? activities : []).map(a => ({
     date: new Date(a.date).toLocaleDateString('es', { weekday: 'short' }),
-    activities: a.activitiesCount || 0,
+    activities: a.eventCount || 0,
   }))
 }
 
