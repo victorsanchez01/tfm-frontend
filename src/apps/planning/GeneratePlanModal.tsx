@@ -56,8 +56,16 @@ export function GeneratePlanModal({ onClose, onGenerated }: GeneratePlanModalPro
     setError('')
 
     try {
+      // Buscar el goal seleccionado para obtener su domainId
+      const selectedGoal = goals.find(g => g.id === selectedGoalId)
       // modules: [] → el backend invoca AI automáticamente
-      const newPlan = await createPlan({ userId, goalId: selectedGoalId, modules: [] })
+      const newPlan = await createPlan({
+        userId,
+        goalId: selectedGoalId,
+        domainId: selectedGoal?.domainId,      // el backend resuelve el nombre del dominio
+        planName: selectedGoal?.title,          // usar el título del goal como nombre del plan
+        modules: [],
+      })
       onGenerated(newPlan)
     } catch (err) {
       console.error('Error generating plan:', err)

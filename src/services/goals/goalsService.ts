@@ -16,6 +16,8 @@ export interface Goal {
   status: 'active' | 'completed' | 'paused'
   progress: number
   category: 'career' | 'skill' | 'project' | 'certification'
+  domainId?: string       // UUID del dominio (expuesto desde el backend)
+  targetLevel?: string    // nivel objetivo
   createdAt: string
   updatedAt: string
   milestones: Milestone[]
@@ -109,6 +111,8 @@ const adaptGoal = (backend: BackendGoal): Goal => ({
   status: mapStatus(backend.status),
   progress: backend.progress || 0,
   category: intensityToCategory(backend.intensity),
+  domainId: backend.domainId,       // exponer domainId para uso en plan generation
+  targetLevel: backend.targetLevel,
   createdAt: backend.createdAt || new Date().toISOString(),
   updatedAt: backend.updatedAt || new Date().toISOString(),
   milestones: [],

@@ -59,6 +59,8 @@ export interface LearningPlan {
 export interface CreatePlanRequest {
   userId: string                // de localStorage['user_id']
   goalId: string                // UUID del objetivo existente del usuario
+  domainId?: string             // UUID del dominio — el backend lo usa para contexto de la IA
+  planName?: string             // nombre del plan (usado por IA como título del objetivo)
   modules: []                   // vacío → el backend invoca AI automáticamente
 }
 
