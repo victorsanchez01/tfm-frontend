@@ -8,3 +8,5 @@
 
 export { ContentsPage } from './ContentsPage'
 export { ContentDetailPage } from './ContentDetailPage'
+export { DomainsPage } from './DomainsPage'
+export { SkillsPage } from './SkillsPage'

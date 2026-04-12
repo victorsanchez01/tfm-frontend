@@ -14,6 +14,8 @@ export interface Domain {
   code: string
   name: string
   description: string
+  status?: string
+  skillCount?: number
 }
 
 export interface Skill {
@@ -22,11 +24,14 @@ export interface Skill {
   code: string
   name: string
   description: string
+  level?: string            // 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED'
+  prerequisites?: { id: string; name: string }[]
 }
 
 export interface ContentItem {
   id: string
-  skillId: string
+  skillId?: string
+  domainId?: string
   type: string
   title: string
   description: string
@@ -43,12 +48,17 @@ const getSkillsAPI = async (domainId?: string): Promise<Skill[]> => {
   return httpClient.get<Skill[]>(`/content/skills${params}`)
 }
 
-const getContentItemsAPI = async (skillId?: string, type?: string): Promise<ContentItem[]> => {
+// ⚠️ El backend ignora skillId — solo filtra por domainId y type
+const getContentItemsAPI = async (domainId?: string, type?: string): Promise<ContentItem[]> => {
   const params = new URLSearchParams()
-  if (skillId) params.append('skillId', skillId)
+  if (domainId) params.append('domainId', domainId)
   if (type) params.append('type', type)
   const queryString = params.toString()
   return httpClient.get<ContentItem[]>(`/content/content-items${queryString ? '?' + queryString : ''}`)
+}
+
+const getSkillPrerequisitesAPI = async (skillId: string): Promise<Skill[]> => {
+  return httpClient.get<Skill[]>(`/content/skills/${skillId}/prerequisites`)
 }
 
 // Mock functions
@@ -64,15 +74,18 @@ const getSkillsMock = async (domainId?: string): Promise<Skill[]> => {
     : mockSkills
 }
 
-const getContentItemsMock = async (skillId?: string, type?: string): Promise<ContentItem[]> => {
+const getContentItemsMock = async (domainId?: string, type?: string): Promise<ContentItem[]> => {
   await new Promise(r => setTimeout(r, 300))
   let items = mockContentItems
-  if (skillId) items = items.filter((i: ContentItem) => i.skillId === skillId)
+  if (domainId) items = items.filter((i: ContentItem) => i.domainId === domainId || i.skillId === domainId)
   if (type) items = items.filter((i: ContentItem) => i.type === type)
   return items
 }
 
+const getSkillPrerequisitesMock = async (): Promise<Skill[]> => []
+
 // Export adapter functions
-export const getDomains = USE_REAL_API ? getDomainsAPI : getDomainsMock
-export const getSkills = USE_REAL_API ? getSkillsAPI : getSkillsMock
-export const getContentItems = USE_REAL_API ? getContentItemsAPI : getContentItemsMock
+export const getDomains           = USE_REAL_API ? getDomainsAPI           : getDomainsMock
+export const getSkills            = USE_REAL_API ? getSkillsAPI            : getSkillsMock
+export const getContentItems      = USE_REAL_API ? getContentItemsAPI      : getContentItemsMock
+export const getSkillPrerequisites = USE_REAL_API ? getSkillPrerequisitesAPI : getSkillPrerequisitesMock

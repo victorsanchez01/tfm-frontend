@@ -12,7 +12,7 @@ import { RegisterPage, LoginPage } from '../auth'
 import { DashboardPage } from '../dashboard'
 import { ProfilePage } from '../profile'
 import { GoalsPage } from '../goals'
-import { ContentsPage, ContentDetailPage } from '../contents'
+import { ContentsPage, ContentDetailPage, DomainsPage, SkillsPage } from '../contents'
 import { FavoritesPage } from '../favorites'
 import { StatsPage } from '../stats'
 import { NotificationsPage } from '../notifications/NotificationsPage'
@@ -36,6 +36,8 @@ export function AppRoutes() {
       <Route path="/certificates" element={<CertificatesPage />} />
       <Route path="/home" element={<HomePage />} />
       <Route path="/learning-plan" element={<LearningPlanPage />} />
+      <Route path="/domains" element={<DomainsPage />} />
+      <Route path="/domains/:domainId/skills" element={<SkillsPage />} />
     </Routes>
   )
 }
