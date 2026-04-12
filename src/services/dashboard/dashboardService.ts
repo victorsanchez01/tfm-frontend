@@ -42,16 +42,21 @@ interface BackendPage<T> {
   totalPages: number
 }
 
+// Campos reales del modelo LearningEvent (tracking-service)
 interface BackendEvent {
-  eventId: string
-  contentItemId: string
+  id: string          // UUID — era 'eventId'
   eventType: string
-  timestamp: string
+  entityType: string
+  entityId: string    // UUID — era 'contentItemId'
+  occurredAt: string  // ISO-8601 — era 'timestamp'
+  payload?: string
 }
 
-const formatRelativeTime = (timestamp: string): string => {
+const formatRelativeTime = (occurredAt: string): string => {
+  if (!occurredAt) return ''
   const now = new Date()
-  const then = new Date(timestamp)
+  const then = new Date(occurredAt)
+  if (isNaN(then.getTime())) return ''
   const diffMs = now.getTime() - then.getTime()
   const diffH = Math.floor(diffMs / 3600000)
   const diffD = Math.floor(diffMs / 86400000)
@@ -59,16 +64,32 @@ const formatRelativeTime = (timestamp: string): string => {
   if (diffH < 1) return 'hace menos de 1h'
   if (diffH < 24) return `hace ${diffH}h`
   if (diffD === 1) return 'ayer'
-  if (diffD < 7) return `hace ${diffD} días`
-  return `hace ${Math.floor(diffD / 7)} semana(s)`
+  if (diffD < 7) return `hace ${diffD} día${diffD > 1 ? 's' : ''}`
+  return `hace ${Math.floor(diffD / 7)} semana${Math.floor(diffD / 7) > 1 ? 's' : ''}`
 }
 
-const mapEventType = (eventType: string): ActivityItem['type'] => {
-  if (eventType === 'CONTENT_COMPLETED') return 'completed'
-  if (eventType === 'GOAL_CREATED') return 'created'
-  if (eventType === 'QUIZ_COMPLETED') return 'evaluated'
-  return 'completed'
+const EVENT_LABELS: Record<string, { title: string; type: ActivityItem['type'] }> = {
+  CONTENT_START:      { title: 'Inició un contenido',         type: 'created' },
+  CONTENT_COMPLETE:   { title: 'Completó un contenido',       type: 'completed' },
+  CONTENT_RESET:      { title: 'Reinició un contenido',       type: 'created' },
+  CONTENT_BOOKMARK:   { title: 'Guardó en favoritos',         type: 'created' },
+  CONTENT_UNBOOKMARK: { title: 'Quitó de favoritos',          type: 'created' },
+  PLAN_GENERATED:     { title: 'Plan de aprendizaje generado',type: 'completed' },
+  ACTIVITY_COMPLETE:  { title: 'Actividad completada',        type: 'completed' },
+  EVALUATION_START:   { title: 'Inició una evaluación',       type: 'evaluated' },
+  EVALUATION_END:     { title: 'Completó una evaluación',     type: 'evaluated' },
 }
+
+const ENTITY_LABELS: Record<string, string> = {
+  content_item: 'Contenido',
+  plan:         'Plan',
+  activity:     'Actividad',
+  assessment:   'Evaluación',
+  skill:        'Skill',
+}
+
+const mapEventType = (eventType: string): ActivityItem['type'] =>
+  EVENT_LABELS[eventType]?.type ?? 'completed'
 
 // Real API implementation
 const getDashboardStatsAPI = async (): Promise<DashboardStats> => {
@@ -106,13 +127,19 @@ const getRecentActivitiesAPI = async (): Promise<ActivityItem[]> => {
     .get<BackendPage<BackendEvent>>(`/tracking/events?userId=${userId}&page=0&size=10`)
     .catch(() => ({ content: [], totalElements: 0, totalPages: 0 }))
 
-  return page.content.map(event => ({
-    id: event.eventId,
-    type: mapEventType(event.eventType),
-    title: `${event.eventType.replace(/_/g, ' ')}`,
-    detail: `Contenido: ${event.contentItemId?.substring(0, 8) || 'N/A'}`,
-    time: formatRelativeTime(event.timestamp),
-  }))
+  return (page.content ?? []).map(event => {
+    const label = EVENT_LABELS[event.eventType]
+    const entityLabel = ENTITY_LABELS[event.entityType] ?? event.entityType ?? 'Elemento'
+    const entityShortId = event.entityId ? `#${event.entityId.substring(0, 6)}` : ''
+
+    return {
+      id: event.id,
+      type: mapEventType(event.eventType),
+      title: label?.title ?? event.eventType.replace(/_/g, ' '),
+      detail: `${entityLabel} ${entityShortId}`,
+      time: formatRelativeTime(event.occurredAt),
+    }
+  })
 }
 
 // Mock implementation
