@@ -18,6 +18,7 @@ import { StatsPage } from '../stats'
 import { NotificationsPage } from '../notifications/NotificationsPage'
 import { CertificatesPage } from '../certificates/CertificatesPage'
 import { LearningPlanPage } from '../planning'
+import { MasteryPage } from '../assessment'
 
 export function AppRoutes() {
   return (
@@ -38,6 +39,7 @@ export function AppRoutes() {
       <Route path="/learning-plan" element={<LearningPlanPage />} />
       <Route path="/domains" element={<DomainsPage />} />
       <Route path="/domains/:domainId/skills" element={<SkillsPage />} />
+      <Route path="/mastery" element={<MasteryPage />} />
     </Routes>
   )
 }
