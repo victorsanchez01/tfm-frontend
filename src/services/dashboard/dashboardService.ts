@@ -14,6 +14,7 @@ export interface ActivityItem {
   title: string
   detail: string
   time: string
+  icon?: string   // emoji específico por tipo de evento
 }
 
 export interface DashboardStats {
@@ -68,16 +69,16 @@ const formatRelativeTime = (occurredAt: string): string => {
   return `hace ${Math.floor(diffD / 7)} semana${Math.floor(diffD / 7) > 1 ? 's' : ''}`
 }
 
-const EVENT_LABELS: Record<string, { title: string; type: ActivityItem['type'] }> = {
-  CONTENT_START:      { title: 'Inició un contenido',         type: 'created' },
-  CONTENT_COMPLETE:   { title: 'Completó un contenido',       type: 'completed' },
-  CONTENT_RESET:      { title: 'Reinició un contenido',       type: 'created' },
-  CONTENT_BOOKMARK:   { title: 'Guardó en favoritos',         type: 'created' },
-  CONTENT_UNBOOKMARK: { title: 'Quitó de favoritos',          type: 'created' },
-  PLAN_GENERATED:     { title: 'Plan de aprendizaje generado',type: 'completed' },
-  ACTIVITY_COMPLETE:  { title: 'Actividad completada',        type: 'completed' },
-  EVALUATION_START:   { title: 'Inició una evaluación',       type: 'evaluated' },
-  EVALUATION_END:     { title: 'Completó una evaluación',     type: 'evaluated' },
+const EVENT_LABELS: Record<string, { title: string; type: ActivityItem['type']; icon: string }> = {
+  CONTENT_START:      { title: 'Inició un contenido',          type: 'created',   icon: '📖' },
+  CONTENT_COMPLETE:   { title: 'Completó un contenido',        type: 'completed', icon: '✅' },
+  CONTENT_RESET:      { title: 'Reinició un contenido',        type: 'created',   icon: '📖' },
+  CONTENT_BOOKMARK:   { title: 'Guardó en favoritos',          type: 'created',   icon: '🔖' },
+  CONTENT_UNBOOKMARK: { title: 'Quitó de favoritos',           type: 'created',   icon: '🔖' },
+  PLAN_GENERATED:     { title: 'Plan de aprendizaje generado', type: 'completed', icon: '💡' },
+  ACTIVITY_COMPLETE:  { title: 'Actividad completada',         type: 'completed', icon: '✅' },
+  EVALUATION_START:   { title: 'Inició una evaluación',        type: 'evaluated', icon: '🎯' },
+  EVALUATION_END:     { title: 'Completó una evaluación',      type: 'evaluated', icon: '🎯' },
 }
 
 const ENTITY_LABELS: Record<string, string> = {
@@ -123,21 +124,43 @@ const getDashboardStatsAPI = async (): Promise<DashboardStats> => {
 
 const getRecentActivitiesAPI = async (): Promise<ActivityItem[]> => {
   const userId = localStorage.getItem('user_id') || ''
-  const page = await httpClient
-    .get<BackendPage<BackendEvent>>(`/tracking/events?userId=${userId}&page=0&size=10`)
-    .catch(() => ({ content: [], totalElements: 0, totalPages: 0 }))
+
+  // Fetch events y catálogo de contenidos en paralelo para resolver nombres
+  const [page, contentItems] = await Promise.all([
+    httpClient
+      .get<BackendPage<BackendEvent>>(`/tracking/events?userId=${userId}&page=0&size=10`)
+      .catch(() => ({ content: [], totalElements: 0, totalPages: 0 })),
+    httpClient
+      .get<{ id: string; title: string }[]>('/content/content-items?page=0&size=100')
+      .catch(() => [] as { id: string; title: string }[]),
+  ])
+
+  // Mapa rápido: contentId → title
+  const contentMap = new Map<string, string>()
+  for (const item of Array.isArray(contentItems) ? contentItems : []) {
+    contentMap.set(item.id, item.title)
+  }
 
   return (page.content ?? []).map(event => {
     const label = EVENT_LABELS[event.eventType]
-    const entityLabel = ENTITY_LABELS[event.entityType] ?? event.entityType ?? 'Elemento'
-    const entityShortId = event.entityId ? `#${event.entityId.substring(0, 6)}` : ''
+
+    // Resolver el nombre del elemento referenciado
+    let detail = ''
+    if (event.entityId) {
+      if (event.entityType === 'content_item') {
+        detail = contentMap.get(event.entityId) ?? ''
+      } else {
+        detail = ENTITY_LABELS[event.entityType] ?? ''
+      }
+    }
 
     return {
       id: event.id,
       type: mapEventType(event.eventType),
       title: label?.title ?? event.eventType.replace(/_/g, ' '),
-      detail: `${entityLabel} ${entityShortId}`,
+      detail,
       time: formatRelativeTime(event.occurredAt),
+      icon: label?.icon,
     }
   })
 }
