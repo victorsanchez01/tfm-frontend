@@ -17,6 +17,7 @@ import { FavoritesPage } from '../favorites'
 import { StatsPage } from '../stats'
 import { NotificationsPage } from '../notifications/NotificationsPage'
 import { CertificatesPage } from '../certificates/CertificatesPage'
+import { LearningPlanPage } from '../planning'
 
 export function AppRoutes() {
   return (
@@ -34,6 +35,7 @@ export function AppRoutes() {
       <Route path="/notifications" element={<NotificationsPage />} />
       <Route path="/certificates" element={<CertificatesPage />} />
       <Route path="/home" element={<HomePage />} />
+      <Route path="/learning-plan" element={<LearningPlanPage />} />
     </Routes>
   )
 }
