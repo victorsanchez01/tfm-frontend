@@ -35,6 +35,7 @@ export interface CreateGoalData {
   description: string
   targetDate: string
   category: 'career' | 'skill' | 'project' | 'certification'
+  domainId?: string   // UUID del dominio (mejora la generación del plan con IA)
 }
 
 export interface UpdateGoalData {
@@ -130,11 +131,12 @@ const getGoalAPI = async (id: string): Promise<Goal | null> => {
 }
 
 const createGoalAPI = async (data: CreateGoalData): Promise<Goal> => {
-  const body: BackendCreateGoal = {
+  const body: BackendCreateGoal & { domainId?: string } = {
     title: data.title,
     description: data.description,
     dueDate: data.targetDate || undefined,
     intensity: categoryToIntensity(data.category),
+    ...(data.domainId ? { domainId: data.domainId } : {}),
   }
   const response = await httpClient.post<BackendGoal>('/profiles/me/goals', body)
   return adaptGoal(response)

@@ -12,6 +12,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Input, Button } from '@shared/ui'
 import { goalsService, type Goal, type CreateGoalData, type UpdateGoalData } from '../../../services/goals/goalsService'
+import { getDomains, type Domain } from '../../../services/content/contentService'
 import styles from './GoalForm.module.css'
 
 const goalSchema = z.object({
@@ -19,6 +20,7 @@ const goalSchema = z.object({
   description: z.string().min(1, 'La descripción es requerida'),
   targetDate: z.string().min(1, 'La fecha meta es requerida'),
   category: z.enum(['career', 'skill', 'project', 'certification']),
+  domainId: z.string().optional(),
 })
 
 type GoalFormData = z.infer<typeof goalSchema>
@@ -32,6 +34,11 @@ interface GoalFormProps {
 export function GoalForm({ goal, onClose, onSave }: GoalFormProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string>()
+  const [domains, setDomains] = useState<Domain[]>([])
+
+  useEffect(() => {
+    getDomains().then(setDomains).catch(() => setDomains([]))
+  }, [])
 
   const {
     register,
@@ -45,6 +52,7 @@ export function GoalForm({ goal, onClose, onSave }: GoalFormProps) {
       description: goal?.description || '',
       targetDate: goal?.targetDate || '',
       category: goal?.category || 'skill',
+      domainId: goal?.domainId || '',
     },
   })
 
@@ -55,6 +63,7 @@ export function GoalForm({ goal, onClose, onSave }: GoalFormProps) {
         description: goal.description,
         targetDate: goal.targetDate,
         category: goal.category,
+        domainId: goal.domainId || '',
       })
     }
   }, [goal, reset])
@@ -65,11 +74,12 @@ export function GoalForm({ goal, onClose, onSave }: GoalFormProps) {
       setError(undefined)
 
       if (goal) {
-        // Update existing goal
         await goalsService.updateGoal(goal.id, data as UpdateGoalData)
       } else {
-        // Create new goal
-        await goalsService.createGoal(data as CreateGoalData)
+        await goalsService.createGoal({
+          ...data,
+          domainId: data.domainId || undefined,
+        } as CreateGoalData)
       }
 
       onSave()
@@ -135,6 +145,23 @@ export function GoalForm({ goal, onClose, onSave }: GoalFormProps) {
             <span className={styles.fieldError}>{errors.category.message}</span>
           )}
         </div>
+
+        {domains.length > 0 && (
+          <div className={styles.field}>
+            <label className={styles.label}>
+              Dominio de conocimiento <span style={{ color: '#94a3b8', fontWeight: 400 }}>(opcional)</span>
+            </label>
+            <select className={styles.select} {...register('domainId')}>
+              <option value="">Sin dominio específico</option>
+              {domains.map(d => (
+                <option key={d.id} value={d.id}>{d.name}</option>
+              ))}
+            </select>
+            <span style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.25rem', display: 'block' }}>
+              El dominio mejora la personalización del plan de IA
+            </span>
+          </div>
+        )}
 
         <Input
           label="Fecha meta"
