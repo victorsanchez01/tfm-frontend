@@ -139,7 +139,22 @@ const createGoalAPI = async (data: CreateGoalData): Promise<Goal> => {
     ...(data.domainId ? { domainId: data.domainId } : {}),
   }
   const response = await httpClient.post<BackendGoal>('/profiles/me/goals', body)
-  return adaptGoal(response)
+  const goal = adaptGoal(response)
+
+  // Tracking event — GOAL_CREATED no tiene schema en el backend → payload libre
+  const userId = localStorage.getItem('user_id') ?? ''
+  httpClient
+    .post('/tracking/events', {
+      userId,
+      eventType: 'GOAL_CREATED',
+      entityType: 'goal',
+      entityId: goal.id,
+      occurredAt: new Date().toISOString(),
+      payload: JSON.stringify({ goalId: goal.id, title: goal.title }),
+    })
+    .catch(() => {})
+
+  return goal
 }
 
 const updateGoalAPI = async (id: string, data: UpdateGoalData): Promise<Goal> => {

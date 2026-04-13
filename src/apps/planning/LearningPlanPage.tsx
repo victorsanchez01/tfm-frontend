@@ -154,7 +154,13 @@ export function LearningPlanPage() {
             entityType: 'activity',
             entityId: activity.id,
             occurredAt: new Date().toISOString(),
-            payload: JSON.stringify({ planId: plan.id, moduleId, activityId: activity.id }),
+            // payload con los campos requeridos por EventPayloadValidator
+            payload: JSON.stringify({
+              activityId: activity.id,
+              planId: plan.id,
+              completedAt: new Date().toISOString(),
+              timeSpentMs: 0,
+            }),
           })
           .catch(() => {})
       }
@@ -199,7 +205,8 @@ export function LearningPlanPage() {
         entityType: 'plan',
         entityId: newPlan.id,
         occurredAt: new Date().toISOString(),
-        payload: JSON.stringify({ planId: newPlan.id, goalId: newPlan.goalId }),
+        // payload con los campos requeridos por EventPayloadValidator (planId + userId)
+        payload: JSON.stringify({ planId: newPlan.id, userId }),
       })
       .catch(() => {})
 

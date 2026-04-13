@@ -75,6 +75,7 @@ const EVENT_LABELS: Record<string, { title: string; type: ActivityItem['type']; 
   CONTENT_RESET:      { title: 'Reinició un contenido',        type: 'created',   icon: '📖' },
   CONTENT_BOOKMARK:   { title: 'Guardó en favoritos',          type: 'created',   icon: '🔖' },
   CONTENT_UNBOOKMARK: { title: 'Quitó de favoritos',           type: 'created',   icon: '🔖' },
+  GOAL_CREATED:       { title: 'Nuevo objetivo creado',         type: 'created',   icon: '🎯' },
   PLAN_GENERATED:     { title: 'Plan de aprendizaje generado', type: 'completed', icon: '💡' },
   ACTIVITY_COMPLETE:  { title: 'Actividad completada',         type: 'completed', icon: '✅' },
   EVALUATION_START:   { title: 'Inició una evaluación',        type: 'evaluated', icon: '🎯' },
