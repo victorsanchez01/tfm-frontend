@@ -56,11 +56,25 @@ export interface LearningPlan {
   domainId?: string
 }
 
+export interface DiagnosticOption {
+  optionId: string
+  statement: string
+  isCorrect: boolean
+}
+
+export interface DiagnosticQuestion {
+  stem: string
+  options: DiagnosticOption[]
+  difficulty: number
+  topic?: string
+}
+
 export interface CreatePlanRequest {
   userId: string                // de localStorage['user_id']
   goalId: string                // UUID del objetivo existente del usuario
   domainId?: string             // UUID del dominio — el backend lo usa para contexto de la IA
   planName?: string             // nombre del plan (usado por IA como título del objetivo)
+  currentLevel?: string         // BEGINNER | INTERMEDIATE | ADVANCED — del test diagnóstico
   modules: []                   // vacío → el backend invoca AI automáticamente
 }
 
@@ -174,9 +188,43 @@ const replanMock = async (): Promise<void> => {
 }
 
 // ---------------------------------------------------------------------------
+// Test diagnóstico
+// ---------------------------------------------------------------------------
+
+const generateDiagnosticAPI = async (
+  domainId: string,
+  level: string = 'BEGINNER',
+  nQuestions: number = 5
+): Promise<DiagnosticQuestion[]> => {
+  const res = await httpClient.post<{ questions: DiagnosticQuestion[] }>(
+    '/planning/plans/diagnostics',
+    { domainId, level, nQuestions }
+  )
+  return res.questions ?? []
+}
+
+const generateDiagnosticMock = async (): Promise<DiagnosticQuestion[]> => {
+  await new Promise(r => setTimeout(r, 800))
+  return [
+    {
+      stem: '¿Qué es un API REST?',
+      options: [
+        { optionId: 'a', statement: 'Un protocolo de comunicación basado en HTTP', isCorrect: true },
+        { optionId: 'b', statement: 'Un lenguaje de programación', isCorrect: false },
+        { optionId: 'c', statement: 'Un tipo de base de datos', isCorrect: false },
+        { optionId: 'd', statement: 'Un framework de frontend', isCorrect: false },
+      ],
+      difficulty: 0.3,
+      topic: 'web',
+    },
+  ]
+}
+
+// ---------------------------------------------------------------------------
 // Exports — patrón dual-mode (USE_REAL_API)
 // ---------------------------------------------------------------------------
 
+export const generateDiagnostic = USE_REAL_API ? generateDiagnosticAPI : generateDiagnosticMock
 export const getActivePlan    = USE_REAL_API ? getActivePlanAPI    : getActivePlanMock
 export const createPlan       = USE_REAL_API ? createPlanAPI       : createPlanMock
 export const getPlan          = USE_REAL_API ? getPlanAPI          : getPlanMock

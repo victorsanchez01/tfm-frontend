@@ -318,3 +318,168 @@
   margin-top: 1rem;
   text-align: center;
 }
+
+/* ── Wizard steps indicator ───────────────────────────────── */
+.steps {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 1.5rem;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #94a3b8;
+}
+
+.stepActive {
+  color: #2563eb;
+}
+
+.stepDone {
+  color: #10b981;
+}
+
+.stepDot {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 9999px;
+  border: 2px solid currentColor;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.625rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.stepLine {
+  flex: 1;
+  height: 2px;
+  background: #e2e8f0;
+  margin: 0 0.5rem;
+}
+
+/* ── Diagnostic quiz ──────────────────────────────────────── */
+.quizProgress {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin-bottom: 0.5rem;
+}
+
+.quizProgressBar {
+  height: 3px;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  margin-bottom: 1.25rem;
+  overflow: hidden;
+}
+
+.quizProgressFill {
+  height: 100%;
+  background: #2563eb;
+  border-radius: 9999px;
+  transition: width 0.3s ease;
+}
+
+.quizTopic {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+  margin-bottom: 0.5rem;
+}
+
+.quizStem {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #0f172a;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.quizOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.quizOption {
+  padding: 0.625rem 0.875rem;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  color: #334155;
+  background: #ffffff;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.quizOption:hover {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+
+.quizOptionSelected {
+  border-color: #2563eb;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-weight: 500;
+}
+
+.quizOptionCorrect {
+  border-color: #10b981;
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+.quizOptionWrong {
+  border-color: #ef4444;
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+/* ── Level result ─────────────────────────────────────────── */
+.levelResult {
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.levelEmoji {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.levelTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.25rem;
+}
+
+.levelSubtitle {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin: 0 0 1.5rem;
+}
+
+.levelBadge {
+  display: inline-block;
+  padding: 0.25rem 0.875rem;
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin-bottom: 1.25rem;
+}
+
+.levelBeginner   { background: #dcfce7; color: #15803d; }
+.levelIntermediate { background: #fef3c7; color: #b45309; }
+.levelAdvanced   { background: #ede9fe; color: #6d28d9; }
