@@ -160,6 +160,7 @@ export function LearningPlanPage() {
               planId: plan.id,
               completedAt: new Date().toISOString(),
               timeSpentMs: 0,
+              title: formatContentRef(activity.contentRef, contentMap), // nombre para el dashboard
             }),
           })
           .catch(() => {})
@@ -206,7 +207,11 @@ export function LearningPlanPage() {
         entityId: newPlan.id,
         occurredAt: new Date().toISOString(),
         // payload con los campos requeridos por EventPayloadValidator (planId + userId)
-        payload: JSON.stringify({ planId: newPlan.id, userId }),
+        payload: JSON.stringify({
+          planId: newPlan.id,
+          userId,
+          title: newPlan.planName ?? newPlan.goalId ?? 'Plan de aprendizaje',
+        }),
       })
       .catch(() => {})
 

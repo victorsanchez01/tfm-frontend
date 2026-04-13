@@ -145,12 +145,23 @@ const getRecentActivitiesAPI = async (): Promise<ActivityItem[]> => {
   return (page.content ?? []).map(event => {
     const label = EVENT_LABELS[event.eventType]
 
-    // Resolver el nombre del elemento referenciado
-    let detail = ''
-    if (event.entityId) {
-      if (event.entityType === 'content_item') {
+    // 1. Intentar extraer el título desde el payload JSON
+    let payloadTitle = ''
+    if (event.payload) {
+      try {
+        const parsed = JSON.parse(event.payload) as Record<string, unknown>
+        if (typeof parsed.title === 'string' && parsed.title.trim()) {
+          payloadTitle = parsed.title.trim()
+        }
+      } catch { /* payload no es JSON válido */ }
+    }
+
+    // 2. Si no hay título en el payload, resolver por entityType/entityId
+    let detail = payloadTitle
+    if (!detail) {
+      if (event.entityId && event.entityType === 'content_item') {
         detail = contentMap.get(event.entityId) ?? ''
-      } else {
+      } else if (event.entityType) {
         detail = ENTITY_LABELS[event.entityType] ?? ''
       }
     }
