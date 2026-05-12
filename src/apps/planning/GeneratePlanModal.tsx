@@ -22,7 +22,7 @@ type Level = 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED'
 
 interface GeneratePlanModalProps {
   onClose: () => void
-  onGenerated: (plan: LearningPlan) => void
+  onGenerated: (plan: LearningPlan, goalTitle?: string) => void
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -160,7 +160,7 @@ export function GeneratePlanModal({ onClose, onGenerated }: GeneratePlanModalPro
         currentLevel: finalLevel,
         modules: [],
       })
-      onGenerated(newPlan)
+      onGenerated(newPlan, selectedGoal?.title)
     } catch {
       setError('No se pudo generar el plan. Verifica que el backend esté activo e inténtalo de nuevo.')
       setStep('result')

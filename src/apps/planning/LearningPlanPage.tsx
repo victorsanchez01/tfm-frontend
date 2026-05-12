@@ -194,7 +194,7 @@ export function LearningPlanPage() {
     }
   }
 
-  const handlePlanGenerated = async (newPlan: LearningPlan) => {
+  const handlePlanGenerated = async (newPlan: LearningPlan, goalTitle?: string) => {
     setShowModal(false)
     setPlan(newPlan)
 
@@ -210,7 +210,7 @@ export function LearningPlanPage() {
         payload: JSON.stringify({
           planId: newPlan.id,
           userId,
-          title: newPlan.title ?? 'Plan de aprendizaje',
+          title: goalTitle ?? newPlan.title ?? 'Plan de aprendizaje',
         }),
       })
       .catch(() => {})
