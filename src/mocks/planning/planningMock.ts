@@ -21,39 +21,16 @@ export const mockLearningPlans: LearningPlan[] = [
         id: '1-1',
         title: 'Java Fundamentals',
         description: 'Learn the basics of Java programming',
-        order: 1,
-        resources: [
-          {
-            id: 'r1',
-            type: 'article',
-            title: 'Introduction to Java',
-            description: 'Basic concepts of Java',
-            completed: true
-          },
-          {
-            id: 'r2',
-            type: 'video',
-            title: 'Java OOP Concepts',
-            description: 'Object-oriented programming',
-            completed: false
-          }
-        ],
+        position: 1,
+        status: 'pending',
         estimatedHours: 20
       },
       {
         id: '1-2',
         title: 'Spring Framework',
         description: 'Master Spring Boot and Spring ecosystem',
-        order: 2,
-        resources: [
-          {
-            id: 'r3',
-            type: 'article',
-            title: 'Spring Boot Basics',
-            description: 'Getting started with Spring Boot',
-            completed: false
-          }
-        ],
+        position: 2,
+        status: 'pending',
         estimatedHours: 30
       }
     ],
@@ -72,16 +49,8 @@ export const mockLearningPlans: LearningPlan[] = [
         id: '2-1',
         title: 'React Foundations',
         description: 'Learn React from scratch',
-        order: 1,
-        resources: [
-          {
-            id: 'r4',
-            type: 'video',
-            title: 'React Components',
-            description: 'Understanding components',
-            completed: false
-          }
-        ],
+        position: 1,
+        status: 'pending',
         estimatedHours: 25
       }
     ],
@@ -95,7 +64,7 @@ export const mockCreatePlan = (request: CreatePlanRequest): LearningPlan => {
     id: `plan-${Date.now()}`,
     userId: 'user-1',
     title: `Custom Learning Plan for ${request.domainId}`,
-    description: `Personalized plan to achieve ${request.targetLevel} level`,
+    description: `Personalized plan to achieve ${request.currentLevel ?? 'beginner'} level`,
     domainId: request.domainId,
     status: 'active',
     modules: [
@@ -103,7 +72,8 @@ export const mockCreatePlan = (request: CreatePlanRequest): LearningPlan => {
         id: `module-${Date.now()}-1`,
         title: 'Getting Started',
         description: 'Introduction to your learning journey',
-        order: 1,
+        position: 1,
+        status: 'pending',
         resources: [
           {
             id: `resource-${Date.now()}-1`,

@@ -7,7 +7,11 @@
 //
 
 import type { AssessmentSession, AssessmentItem, AssessmentSessionWithFeedback } from '@services/assessment/assessmentService'
-import type { SubmitResponseRequest } from '@services/assessment/assessmentService'
+
+interface MockSubmitRequest {
+  answer: string
+  responseTime: number
+}
 
 const mockQuestions: Record<string, AssessmentItem[]> = {
   '1': [ // Java questions
@@ -71,29 +75,28 @@ export const mockAssessmentSession = (domainId: string): AssessmentSession => {
 export const mockNextItem = (sessionId: string): AssessmentItem => {
   const session = activeSessions.get(sessionId)
   if (!session) throw new Error('Session not found')
-  
-  const questions = mockQuestions[session.domainId] || []
-  const question = questions[session.currentQuestionIndex]
+
+  const questions = mockQuestions[session.domainId ?? ''] || []
+  const question = questions[session.currentQuestionIndex ?? 0]
   
   if (!question) throw new Error('No more questions')
   
   return question
 }
 
-export const mockSubmitResponse = (sessionId: string, request: SubmitResponseRequest): AssessmentSessionWithFeedback => {
+export const mockSubmitResponse = (sessionId: string, request: MockSubmitRequest): AssessmentSessionWithFeedback => {
   const session = activeSessions.get(sessionId)
   if (!session) throw new Error('Session not found')
-  
+
   const question = mockNextItem(sessionId)
   const isCorrect = question.correctAnswer === request.answer
-  
-  // Update session
-  session.currentQuestionIndex++
-  if (session.currentQuestionIndex >= session.totalQuestions) {
+
+  session.currentQuestionIndex = (session.currentQuestionIndex ?? 0) + 1
+  if (session.currentQuestionIndex >= (session.totalQuestions ?? 0)) {
     session.status = 'completed'
     session.completedAt = new Date().toISOString()
   }
-  
+
   return {
     session,
     item: question,

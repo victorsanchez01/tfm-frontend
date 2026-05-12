@@ -210,7 +210,7 @@ export function LearningPlanPage() {
         payload: JSON.stringify({
           planId: newPlan.id,
           userId,
-          title: newPlan.planName ?? newPlan.goalId ?? 'Plan de aprendizaje',
+          title: newPlan.title ?? newPlan.goalId ?? 'Plan de aprendizaje',
         }),
       })
       .catch(() => {})
