@@ -6,7 +6,7 @@
 //  Copyright © 2026 Victor Sanchez. All rights reserved.
 //
 
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { Button } from '@shared/ui'
 import { goalsService, type Goal } from '../../services/goals/goalsService'
 import {
@@ -118,7 +118,7 @@ export function GeneratePlanModal({ onClose, onGenerated }: GeneratePlanModalPro
   const handleConfirmAnswer = () => {
     if (!selectedOption) return
     const q = questions[currentQ]
-    const isCorrect = q.options.find(o => o.optionId === selectedOption)?.isCorrect ?? false
+    const isCorrect = q.options.find(o => (o.label ?? o.optionId) === selectedOption)?.isCorrect ?? false
     setAnswered(true)
     const newAnswers = [...answers, { optionId: selectedOption, isCorrect }]
 
@@ -174,9 +174,8 @@ export function GeneratePlanModal({ onClose, onGenerated }: GeneratePlanModalPro
   const StepIndicator = () => (
     <div className={styles.steps}>
       {['Objetivo', 'Diagnóstico', 'Generar'].map((label, i) => (
-        <>
+        <Fragment key={label}>
           <div
-            key={label}
             className={`${styles.step} ${i === stepIndex ? styles.stepActive : i < stepIndex ? styles.stepDone : ''}`}
           >
             <div className={styles.stepDot}>
@@ -184,8 +183,8 @@ export function GeneratePlanModal({ onClose, onGenerated }: GeneratePlanModalPro
             </div>
             {label}
           </div>
-          {i < 2 && <div key={`line-${i}`} className={styles.stepLine} />}
-        </>
+          {i < 2 && <div className={styles.stepLine} />}
+        </Fragment>
       ))}
     </div>
   )
@@ -268,16 +267,17 @@ export function GeneratePlanModal({ onClose, onGenerated }: GeneratePlanModalPro
 
                 <div className={styles.quizOptions}>
                   {questions[currentQ]?.options.map(opt => {
+                    const id = opt.label ?? opt.optionId ?? ''
                     let cls = styles.quizOption
                     if (answered) {
                       if (opt.isCorrect) cls = `${styles.quizOption} ${styles.quizOptionCorrect}`
-                      else if (opt.optionId === selectedOption) cls = `${styles.quizOption} ${styles.quizOptionWrong}`
-                    } else if (opt.optionId === selectedOption) {
+                      else if (id === selectedOption) cls = `${styles.quizOption} ${styles.quizOptionWrong}`
+                    } else if (id === selectedOption) {
                       cls = `${styles.quizOption} ${styles.quizOptionSelected}`
                     }
                     return (
-                      <button key={opt.optionId} className={cls} onClick={() => handleSelectOption(opt.optionId)}>
-                        <strong>{opt.optionId.toUpperCase()}.</strong> {opt.statement}
+                      <button key={id} className={cls} onClick={() => handleSelectOption(id)}>
+                        <strong>{id.toUpperCase()}.</strong> {opt.statement}
                       </button>
                     )
                   })}
