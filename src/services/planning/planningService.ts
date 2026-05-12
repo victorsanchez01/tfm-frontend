@@ -57,7 +57,8 @@ export interface LearningPlan {
 }
 
 export interface DiagnosticOption {
-  optionId: string
+  optionId?: string
+  label?: string
   statement: string
   isCorrect: boolean
 }
