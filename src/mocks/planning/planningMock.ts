@@ -74,15 +74,6 @@ export const mockCreatePlan = (request: CreatePlanRequest): LearningPlan => {
         description: 'Introduction to your learning journey',
         position: 1,
         status: 'pending',
-        resources: [
-          {
-            id: `resource-${Date.now()}-1`,
-            type: 'article',
-            title: 'Welcome to Your Learning Plan',
-            description: 'Overview and expectations',
-            completed: false
-          }
-        ],
         estimatedHours: 10
       }
     ],

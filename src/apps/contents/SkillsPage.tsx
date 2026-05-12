@@ -70,8 +70,7 @@ export function SkillsPage() {
     ? skills
     : skills.filter(s => s.level?.toUpperCase() === levelFilter)
 
-  const handleViewContents = (e: React.MouseEvent) => {
-    e.stopPropagation()
+  const handleViewContents = () => {
     navigate(`/contents?domainId=${domainId}`)
   }
 
